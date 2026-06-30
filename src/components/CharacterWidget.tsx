@@ -148,6 +148,7 @@ export default function CharacterWidget() {
     flex: 1,
     maxWidth: '40%',
     margin: '0 auto',
+    zIndex: 1,
   }
 
   const imgBaseStyle: React.CSSProperties = {
@@ -178,10 +179,27 @@ export default function CharacterWidget() {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
+        position: 'relative',
       }}
     >
+      <div style={{
+        position: 'absolute',
+        bottom: '1rem',
+        left: 0,
+        right: 0,
+        textAlign: 'center',
+        color: 'rgba(255,255,255,0.06)',
+        fontSize: '0.6rem',
+        letterSpacing: '0.05em',
+        pointerEvents: 'none',
+        userSelect: 'none',
+        zIndex: 0,
+        padding: '0 1rem',
+      }}>
+        esto no sirve para nada pero está entretenido
+      </div>
       {/* TOP ROW — head, bottom-aligned */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '0.5rem', position: 'relative', zIndex: 1 }}>
         <button
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
@@ -240,7 +258,7 @@ export default function CharacterWidget() {
       </div>
 
       {/* MIDDLE ROW — body, opposite direction */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', position: 'relative', zIndex: 1 }}>
         <button
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
@@ -297,7 +315,7 @@ export default function CharacterWidget() {
       </div>
 
       {/* BOTTOM ROW — legs, top-aligned */}
-      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', paddingTop: '1.5rem', position: 'relative', zIndex: 1 }}>
         <button
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
