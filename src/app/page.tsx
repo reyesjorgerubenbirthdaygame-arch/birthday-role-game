@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 import type { TraitOption, BackgroundOption } from '@/lib/types/database'
+import CharacterWidget from '@/components/CharacterWidget'
 
 const EVENT_DATE = new Date('2026-08-01T10:00:00Z')
 
@@ -110,6 +111,14 @@ export default function HomePage() {
     negative_trait_2: '',
     background: '',
   })
+  const progressPathRef = useRef<SVGPathElement>(null)
+  const [pathLength, setPathLength] = useState(0)
+
+  useEffect(() => {
+    if (progressPathRef.current) {
+      setPathLength(progressPathRef.current.getTotalLength())
+    }
+  }, [])
   const [completedPlayer, setCompletedPlayer] = useState<PlayerRecord | null>(null)
   const [stepError, setStepError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -317,27 +326,31 @@ export default function HomePage() {
     <main className="min-h-screen bg-bg-primary flex flex-col items-center justify-center p-4 gap-6">
       <div className="max-w-md w-full mx-auto flex flex-col gap-6">
 
-        {/* Countdown — always visible */}
-        <div className="bg-bg-card rounded-lg p-6 shadow-md text-center">
-          <p className="text-text-muted text-xs uppercase tracking-widest mb-3">El evento comienza en</p>
-          {timeLeft ? (
-            <div className="flex justify-center gap-4">
-              {[
-                { value: timeLeft.days, label: 'días' },
-                { value: timeLeft.hours, label: 'horas' },
-                { value: timeLeft.minutes, label: 'min' },
-                { value: timeLeft.seconds, label: 'seg' },
-              ].map(({ value, label }) => (
-                <div key={label} className="flex flex-col items-center">
-                  <span className="text-4xl font-bold text-accent tabular-nums">{pad(value)}</span>
-                  <span className="text-text-muted text-xs mt-1">{label}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-2xl font-bold text-accent">¡El evento ha comenzado!</p>
-          )}
-        </div>
+        {/* Countdown — shown unless in building view */}
+        {view === 'building' ? (
+          <CharacterWidget />
+        ) : (
+          <div className="bg-bg-card rounded-lg p-6 shadow-md text-center">
+            <p className="text-text-muted text-xs uppercase tracking-widest mb-3">El evento comienza en</p>
+            {timeLeft ? (
+              <div className="flex justify-center gap-4">
+                {[
+                  { value: timeLeft.days, label: 'días' },
+                  { value: timeLeft.hours, label: 'horas' },
+                  { value: timeLeft.minutes, label: 'min' },
+                  { value: timeLeft.seconds, label: 'seg' },
+                ].map(({ value, label }) => (
+                  <div key={label} className="flex flex-col items-center">
+                    <span className="text-4xl font-bold text-accent tabular-nums">{pad(value)}</span>
+                    <span className="text-text-muted text-xs mt-1">{label}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-2xl font-bold text-accent">¡El evento ha comenzado!</p>
+            )}
+          </div>
+        )}
 
         {/* Panel — swaps by view */}
         <div className="bg-bg-card rounded-lg p-8 shadow-md w-full">
@@ -437,16 +450,43 @@ export default function HomePage() {
 
                 {/* Progress */}
                 <div className="mb-6">
-                  <div className="flex justify-between text-xs text-text-muted mb-2">
+                  <div className="text-xs text-text-muted mb-2">
                     <span>Paso {step + 1} de {STEPS.length}</span>
-                    <span>{Math.round(progress)}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-bg-secondary rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-accent rounded-full transition-all duration-300"
-                      style={{ width: `${progress}%` }}
+                  <svg
+                    className="w-full"
+                    viewBox="0 0 1734 220"
+                    preserveAspectRatio="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    {/* Track path */}
+                    <path
+                      d="M2.5 164.94C130 85 257 6 303 2.5 349 -1 228 122 277 143 326 164 506 116 596 128 686 140 743 221 816 216 889 211 944 116 1036 98 1128 80 1285 118 1370 109 1455 100 1485 48 1546 46 1606 44 1669 69 1732.5 94"
+                      fill="none"
+                      stroke="#2a2a3e"
+                      strokeWidth="6"
+                      strokeLinecap="round"
                     />
-                  </div>
+                    {/* Active (drawn) path */}
+                    <path
+                      ref={progressPathRef}
+                      d="M2.5 164.94C130 85 257 6 303 2.5 349 -1 228 122 277 143 326 164 506 116 596 128 686 140 743 221 816 216 889 211 944 116 1036 98 1128 80 1285 118 1370 109 1455 100 1485 48 1546 46 1606 44 1669 69 1732.5 94"
+                      fill="none"
+                      stroke="#7c3aed"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                      strokeDasharray={pathLength || undefined}
+                      strokeDashoffset={pathLength ? pathLength * (1 - progress / 100) : undefined}
+                      style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+                    />
+                    {/* Flag icon at end of path */}
+                    <g transform="translate(1700, 60) scale(0.5)">
+                      <path
+                        d="M14.678 57.95 1.068-.298a1.931 1.931 0 0 0 1.34-2.38L4.878 11.585a2.414 2.414 0 0 0-2.975-1.675l-.138.038A2.414 2.414 0 0 0 .09 12.922L12.299 56.61a1.931 1.931 0 0 0 2.379 1.34zM57.67 27.42a46.256 46.256 0 0 1-10.64-7.32.95.95 0 0 1-.27-.97A136.854 136.854 0 0 0 50.27.95c.12-1.02-.43-1.32-1.01-.62-11.38 13.61-31.07-2.49-42.79 9.88.14.263.251.542.33.83l7.92 28.36c11.74-12.22 31.36 3.78 42.72-9.8.58-.7.69-1.98.23-2.18z"
+                        fill="#7c3aed"
+                      />
+                    </g>
+                  </svg>
                 </div>
 
                 {/* Step content */}
