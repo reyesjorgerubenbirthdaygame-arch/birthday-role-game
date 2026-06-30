@@ -116,9 +116,11 @@ export default function CharacterWidget() {
       <div
         style={{
           ...slotStyle,
-          height: '160px',
+          height: '130px',
           display: 'flex',
           alignItems: 'flex-end',
+          marginLeft: '2rem',
+          marginRight: '2rem',
         }}
       >
         {/* current */}
@@ -145,7 +147,7 @@ export default function CharacterWidget() {
               ...imgBaseStyle,
               objectFit: 'cover',
               objectPosition: 'bottom',
-              animation: `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 0ms forwards`,
+              animation: `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 0ms both`,
             }}
           />
         )}
@@ -155,8 +157,10 @@ export default function CharacterWidget() {
       <div
         style={{
           ...slotStyle,
-          height: '180px',
+          height: '150px',
           flexShrink: 0,
+          marginLeft: '2rem',
+          marginRight: '2rem',
         }}
       >
         <img
@@ -181,7 +185,7 @@ export default function CharacterWidget() {
               ...imgBaseStyle,
               objectFit: 'cover',
               objectPosition: 'center',
-              animation: `slideInLeft ${ANIM_DURATION}ms cubic-bezier(0.2,0,0.4,1) 80ms forwards`,
+              animation: `slideInLeft ${ANIM_DURATION}ms cubic-bezier(0.2,0,0.4,1) 80ms both`,
             }}
           />
         )}
@@ -191,9 +195,11 @@ export default function CharacterWidget() {
       <div
         style={{
           ...slotStyle,
-          height: '140px',
+          height: '110px',
           display: 'flex',
           alignItems: 'flex-start',
+          marginLeft: '2rem',
+          marginRight: '2rem',
         }}
       >
         <img
@@ -218,7 +224,7 @@ export default function CharacterWidget() {
               ...imgBaseStyle,
               objectFit: 'cover',
               objectPosition: 'top',
-              animation: `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 40ms forwards`,
+              animation: `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 40ms both`,
             }}
           />
         )}
