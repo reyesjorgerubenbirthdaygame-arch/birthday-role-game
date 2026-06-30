@@ -447,7 +447,7 @@ export default function HomePage() {
                   </div>
                   <svg
                     className="w-full"
-                    viewBox="0 0 1734 220"
+                    viewBox="0 0 1900 240"
                     preserveAspectRatio="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -477,7 +477,7 @@ export default function HomePage() {
                       style={{ transition: 'clip-path 0.5s ease' }}
                     />
                     {/* Flag icon at end of path */}
-                    <g transform="translate(1710, 7) scale(1.5)">
+                    <g transform="translate(1650, 7) scale(1.5)">
                       <path
                         d="M14.678 57.95 1.068-.298a1.931 1.931 0 0 0 1.34-2.38L4.878 11.585a2.414 2.414 0 0 0-2.975-1.675l-.138.038A2.414 2.414 0 0 0 .09 12.922L12.299 56.61a1.931 1.931 0 0 0 2.379 1.34zM57.67 27.42a46.256 46.256 0 0 1-10.64-7.32.95.95 0 0 1-.27-.97A136.854 136.854 0 0 0 50.27.95c.12-1.02-.43-1.32-1.01-.62-11.38 13.61-31.07-2.49-42.79 9.88.14.263.251.542.33.83l7.92 28.36c11.74-12.22 31.36 3.78 42.72-9.8.58-.7.69-1.98.23-2.18z"
                         fill="#7c3aed"
