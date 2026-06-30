@@ -125,6 +125,7 @@ export default function HomePage() {
         return
       }
       setUser(session.user)
+      setView('loading')
       await loadBuilderData(session.user.id)
     }).catch(() => setView('auth'))
 
@@ -135,6 +136,7 @@ export default function HomePage() {
         return
       }
       setUser(session.user)
+      setView('loading')
       await loadBuilderData(session.user.id).catch(() => setView('auth'))
     })
 
@@ -148,11 +150,18 @@ export default function HomePage() {
       const locked = EVENT_DATE <= new Date()
       setIsLocked(locked)
 
-      const [posRes, negRes, bgRes, playerRes] = await Promise.all([
-        supabase.from('trait_options').select('id, name').eq('type', 'positive').order('name'),
-        supabase.from('trait_options').select('id, name').eq('type', 'negative').order('name'),
-        supabase.from('background_options').select('id, name').order('name'),
-        supabase.from('players').select('*').eq('user_id', userId).maybeSingle(),
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 15000)
+      )
+
+      const [posRes, negRes, bgRes, playerRes] = await Promise.race([
+        Promise.all([
+          supabase.from('trait_options').select('id, name').eq('type', 'positive').order('name'),
+          supabase.from('trait_options').select('id, name').eq('type', 'negative').order('name'),
+          supabase.from('background_options').select('id, name').order('name'),
+          supabase.from('players').select('*').eq('user_id', userId).maybeSingle(),
+        ]),
+        timeout,
       ])
 
       if (posRes.data) setPosTraits(posRes.data as TraitOption[])
