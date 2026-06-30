@@ -573,6 +573,19 @@ export default function HomePage() {
                 )}
               </div>
 
+              <div className="flex justify-center gap-2 flex-wrap mb-4">
+                {completedPlayer.negative_trait_1 && (
+                  <span className="text-sm text-white bg-negative px-3 py-1 rounded-full">
+                    {traitName(completedPlayer.negative_trait_1, negTraits)}
+                  </span>
+                )}
+                {completedPlayer.negative_trait_2 && (
+                  <span className="text-sm text-white bg-negative px-3 py-1 rounded-full">
+                    {traitName(completedPlayer.negative_trait_2, negTraits)}
+                  </span>
+                )}
+              </div>
+
               {completedPlayer.background && (
                 <p className="text-text-muted text-sm mb-6">{bgName(completedPlayer.background)}</p>
               )}

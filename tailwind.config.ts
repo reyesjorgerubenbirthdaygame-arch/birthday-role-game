@@ -17,6 +17,7 @@ const config: Config = {
         'danger-hover':  'var(--color-danger-hover)',
         success:         'var(--color-success)',
         warning:         'var(--color-warning)',
+        negative:        'var(--color-negative)',
         border:          'var(--color-border)',
       },
       fontSize: {
