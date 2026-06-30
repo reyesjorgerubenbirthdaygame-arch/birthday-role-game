@@ -89,7 +89,7 @@ export default function CharacterWidget() {
   const slotStyle: React.CSSProperties = {
     position: 'relative',
     overflow: 'hidden',
-    width: '100%',
+    // width: '100%' removed — margins now set width implicitly
   }
 
   const imgBaseStyle: React.CSSProperties = {

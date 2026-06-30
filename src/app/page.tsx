@@ -445,6 +445,7 @@ export default function HomePage() {
                   <div className="text-xs text-text-muted mb-2">
                     <span>Paso {step + 1} de {STEPS.length}</span>
                   </div>
+                  <div style={{ paddingLeft: '5%', paddingRight: '12%' }}>
                   <svg
                     className="w-full"
                     viewBox="0 0 1900 240"
@@ -484,6 +485,7 @@ export default function HomePage() {
                       />
                     </g>
                   </svg>
+                  </div>
                 </div>
 
                 {/* Step content */}
