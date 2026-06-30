@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 
@@ -14,11 +14,11 @@ const TOP_IMAGES = [
   'head_shakira.png',
   'head_van.png',
   'head_zombie.png',
-  'Picture39.png',
 ]
 
 const MIDDLE_IMAGES = [
   'body_adan.png',
+  'body_black.png',
   'body_eve.png',
   'body_frida.png',
   'body_marylin.png',
@@ -26,11 +26,12 @@ const MIDDLE_IMAGES = [
   'body_nadal.png',
   'body_shakira.png',
   'body_van.png',
-  'head_black.png',
+  'body_zombie.png',
   'middle_indian.png',
 ]
 
 const BOTTOM_IMAGES = [
+  'bottom_indian.png',
   'legs_adan.png',
   'legs_black.png',
   'legs_eve.png',
@@ -40,7 +41,7 @@ const BOTTOM_IMAGES = [
   'legs_nadal.png',
   'legs_shakira.png',
   'legs_van.png',
-  'Picture40.png',
+  'legs_zombie.png',
 ]
 
 function wrapIndex(i: number, len: number): number {
@@ -196,9 +197,9 @@ export default function CharacterWidget() {
         zIndex: 0,
         padding: '0 1rem',
       }}>
-        esto no sirve para nada pero está entretenido
+        esto no sirve para nada pero estÃ¡ entretenido
       </div>
-      {/* TOP ROW — head, bottom-aligned */}
+      {/* TOP ROW â€” head, bottom-aligned */}
       <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '0.5rem', position: 'relative', zIndex: 1 }}>
         <button
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
@@ -257,7 +258,7 @@ export default function CharacterWidget() {
         </button>
       </div>
 
-      {/* MIDDLE ROW — body, opposite direction */}
+      {/* MIDDLE ROW â€” body, opposite direction */}
       <div style={{ display: 'flex', alignItems: 'center', position: 'relative', zIndex: 1 }}>
         <button
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
@@ -314,7 +315,7 @@ export default function CharacterWidget() {
         </button>
       </div>
 
-      {/* BOTTOM ROW — legs, top-aligned */}
+      {/* BOTTOM ROW â€” legs, top-aligned */}
       <div style={{ display: 'flex', alignItems: 'flex-start', paddingTop: '1.5rem', position: 'relative', zIndex: 1 }}>
         <button
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
