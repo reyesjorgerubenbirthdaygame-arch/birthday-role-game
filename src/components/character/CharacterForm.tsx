@@ -40,11 +40,11 @@ export function CharacterForm({
     setSaved(false)
 
     if (!validateTraitsNotDuplicate(positiveTrait1 || null, positiveTrait2 || null)) {
-      setError('Positive traits must be different.')
+      setError('Los rasgos positivos deben ser diferentes.')
       return
     }
     if (!validateTraitsNotDuplicate(negativeTrait1 || null, negativeTrait2 || null)) {
-      setError('Negative traits must be different.')
+      setError('Los rasgos negativos deben ser diferentes.')
       return
     }
 
@@ -78,73 +78,73 @@ export function CharacterForm({
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-6">
       {isLocked && (
-        <p className="text-warning text-sm">The event has started — your character is locked.</p>
+        <p className="text-warning text-sm">El evento ha comenzado — tu personaje está bloqueado.</p>
       )}
 
       <div className="flex flex-col gap-2">
-        <label className="text-text-secondary text-sm">Character Name</label>
+        <label className="text-text-secondary text-sm">Nombre del personaje</label>
         <input
           value={characterName}
           onChange={e => setCharacterName(e.target.value)}
           disabled={isLocked}
-          placeholder="e.g. Aria Shadowbane"
+          placeholder="ej. Aria Sombrascura"
           className={inputClass}
         />
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-text-secondary text-sm">Creature type <span className="text-text-muted">(e.g. human, ghost, dragon…)</span></label>
+        <label className="text-text-secondary text-sm">Tipo de criatura <span className="text-text-muted">(ej. humano, fantasma, dragón…)</span></label>
         <input
           value={creature}
           onChange={e => setCreature(e.target.value)}
           disabled={isLocked}
-          placeholder="human"
+          placeholder="humano"
           className={inputClass}
         />
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-text-secondary text-sm">Positive Trait 1</label>
+        <label className="text-text-secondary text-sm">Rasgo positivo 1</label>
         <select value={positiveTrait1} onChange={e => setPositiveTrait1(e.target.value)} disabled={isLocked} className={inputClass}>
-          <option value="">— choose —</option>
+          <option value="">— elige —</option>
           {positiveTraits.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
         </select>
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-text-secondary text-sm">Positive Trait 2</label>
+        <label className="text-text-secondary text-sm">Rasgo positivo 2</label>
         <select value={positiveTrait2} onChange={e => setPositiveTrait2(e.target.value)} disabled={isLocked} className={inputClass}>
-          <option value="">— choose —</option>
+          <option value="">— elige —</option>
           {positiveTraits.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
         </select>
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-text-secondary text-sm">Negative Trait 1</label>
+        <label className="text-text-secondary text-sm">Rasgo negativo 1</label>
         <select value={negativeTrait1} onChange={e => setNegativeTrait1(e.target.value)} disabled={isLocked} className={inputClass}>
-          <option value="">— choose —</option>
+          <option value="">— elige —</option>
           {negativeTraits.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
         </select>
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-text-secondary text-sm">Negative Trait 2</label>
+        <label className="text-text-secondary text-sm">Rasgo negativo 2</label>
         <select value={negativeTrait2} onChange={e => setNegativeTrait2(e.target.value)} disabled={isLocked} className={inputClass}>
-          <option value="">— choose —</option>
+          <option value="">— elige —</option>
           {negativeTraits.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
         </select>
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-text-secondary text-sm">Background</label>
+        <label className="text-text-secondary text-sm">Trasfondo</label>
         <select value={background} onChange={e => setBackground(e.target.value)} disabled={isLocked} className={inputClass}>
-          <option value="">— choose —</option>
+          <option value="">— elige —</option>
           {backgrounds.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
         </select>
       </div>
 
       {error && <p className="text-danger text-sm">{error}</p>}
-      {saved && <p className="text-success text-sm">Character saved!</p>}
+      {saved && <p className="text-success text-sm">¡Personaje guardado!</p>}
 
       {!isLocked && (
         <button
@@ -152,7 +152,7 @@ export function CharacterForm({
           disabled={loading}
           className="bg-accent hover:bg-accent-hover text-white font-medium rounded-md px-4 py-2 disabled:opacity-50"
         >
-          {loading ? 'Saving…' : 'Save character'}
+          {loading ? 'Guardando…' : 'Guardar personaje'}
         </button>
       )}
     </form>

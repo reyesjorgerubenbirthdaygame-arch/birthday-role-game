@@ -29,7 +29,7 @@ export default function HomePage() {
         options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
       })
       if (error) setError(error.message)
-      else setMessage('Check your email to confirm your account.')
+      else setMessage('Revisa tu correo para confirmar tu cuenta.')
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) setError(error.message)
@@ -49,20 +49,20 @@ export default function HomePage() {
             onClick={() => setMode('register')}
             className={`text-sm font-medium pb-1 border-b-2 ${mode === 'register' ? 'border-accent text-text-primary' : 'border-transparent text-text-muted'}`}
           >
-            Register
+            Registrarse
           </button>
           <button
             onClick={() => setMode('login')}
             className={`text-sm font-medium pb-1 border-b-2 ${mode === 'login' ? 'border-accent text-text-primary' : 'border-transparent text-text-muted'}`}
           >
-            Login
+            Iniciar sesión
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Correo electrónico"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -70,7 +70,7 @@ export default function HomePage() {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Contraseña"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
@@ -84,7 +84,7 @@ export default function HomePage() {
             disabled={loading}
             className="bg-accent hover:bg-accent-hover text-white font-medium rounded-md px-4 py-2 text-md disabled:opacity-50"
           >
-            {loading ? 'Loading…' : mode === 'register' ? 'Create account' : 'Sign in'}
+            {loading ? 'Cargando…' : mode === 'register' ? 'Crear cuenta' : 'Iniciar sesión'}
           </button>
         </form>
       </div>

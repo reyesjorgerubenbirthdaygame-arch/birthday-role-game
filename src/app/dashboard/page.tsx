@@ -8,8 +8,8 @@ export default async function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-bg-primary text-text-primary p-8">
-      <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-      <p className="text-text-secondary">Welcome, {user.email}</p>
+      <h1 className="text-3xl font-bold mb-4">Panel</h1>
+      <p className="text-text-secondary">Bienvenido/a, {user.email}</p>
     </main>
   )
 }

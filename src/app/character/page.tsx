@@ -26,7 +26,7 @@ export default async function CharacterPage() {
   return (
     <main className="min-h-screen bg-bg-primary text-text-primary p-8">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Your Character</h1>
+        <h1 className="text-3xl font-bold mb-8">Tu personaje</h1>
         <CharacterForm
           player={player}
           userId={user.id}
