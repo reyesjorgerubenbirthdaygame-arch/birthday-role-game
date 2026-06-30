@@ -119,8 +119,8 @@ export default function CharacterWidget() {
           height: '130px',
           display: 'flex',
           alignItems: 'flex-end',
-          marginLeft: '2rem',
-          marginRight: '2rem',
+          marginLeft: '25%',
+          marginRight: '25%',
         }}
       >
         {/* current */}
@@ -159,8 +159,8 @@ export default function CharacterWidget() {
           ...slotStyle,
           height: '150px',
           flexShrink: 0,
-          marginLeft: '2rem',
-          marginRight: '2rem',
+          marginLeft: '25%',
+          marginRight: '25%',
         }}
       >
         <img
@@ -198,8 +198,8 @@ export default function CharacterWidget() {
           height: '110px',
           display: 'flex',
           alignItems: 'flex-start',
-          marginLeft: '2rem',
-          marginRight: '2rem',
+          marginLeft: '25%',
+          marginRight: '25%',
         }}
       >
         <img
