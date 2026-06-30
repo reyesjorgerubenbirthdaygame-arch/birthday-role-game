@@ -158,16 +158,6 @@ export default function CharacterWidget() {
     height: '100%',
   }
 
-  const btnStyle: React.CSSProperties = {
-    background: 'transparent',
-    border: 'none',
-    color: '#7c3aed',
-    fontSize: '1.4rem',
-    padding: '0.25rem 0.5rem',
-    cursor: 'pointer',
-    lineHeight: 1,
-  }
-
   const getExitAnim = (enterFrom: 'left' | 'right', delayMs: number): string =>
     enterFrom === 'right'
       ? `slideOutLeft ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) ${delayMs}ms forwards`
@@ -193,13 +183,15 @@ export default function CharacterWidget() {
       {/* TOP ROW — head, bottom-aligned */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <button
-          style={btnStyle}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
             transitionSlot(setTop, TOP_IMAGES.length, -1, 'left')
           }}
         >
-          ‹
+          <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path transform="scale(-1,1) translate(-512,0)" d="M256 0C114.837 0 0 114.837 0 256s114.837 256 256 256 256-114.837 256-256S397.163 0 256 0zm79.083 271.083L228.416 377.749A21.275 21.275 0 0 1 213.333 384a21.277 21.277 0 0 1-15.083-6.251c-8.341-8.341-8.341-21.824 0-30.165L289.835 256l-91.584-91.584c-8.341-8.341-8.341-21.824 0-30.165s21.824-8.341 30.165 0l106.667 106.667c8.341 8.341 8.341 21.823 0 30.165z" fill="#7c3aed" />
+          </svg>
         </button>
         <div
           style={{
@@ -235,26 +227,30 @@ export default function CharacterWidget() {
           )}
         </div>
         <button
-          style={btnStyle}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
             transitionSlot(setTop, TOP_IMAGES.length, 1, 'right')
           }}
         >
-          ›
+          <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path d="M256 0C114.837 0 0 114.837 0 256s114.837 256 256 256 256-114.837 256-256S397.163 0 256 0zm79.083 271.083L228.416 377.749A21.275 21.275 0 0 1 213.333 384a21.277 21.277 0 0 1-15.083-6.251c-8.341-8.341-8.341-21.824 0-30.165L289.835 256l-91.584-91.584c-8.341-8.341-8.341-21.824 0-30.165s21.824-8.341 30.165 0l106.667 106.667c8.341 8.341 8.341 21.823 0 30.165z" fill="#7c3aed" />
+          </svg>
         </button>
       </div>
 
       {/* MIDDLE ROW — body, opposite direction */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <button
-          style={btnStyle}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
             transitionSlot(setMiddle, MIDDLE_IMAGES.length, -1, 'right')
           }}
         >
-          ‹
+          <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path transform="scale(-1,1) translate(-512,0)" d="M256 0C114.837 0 0 114.837 0 256s114.837 256 256 256 256-114.837 256-256S397.163 0 256 0zm79.083 271.083L228.416 377.749A21.275 21.275 0 0 1 213.333 384a21.277 21.277 0 0 1-15.083-6.251c-8.341-8.341-8.341-21.824 0-30.165L289.835 256l-91.584-91.584c-8.341-8.341-8.341-21.824 0-30.165s21.824-8.341 30.165 0l106.667 106.667c8.341 8.341 8.341 21.823 0 30.165z" fill="#7c3aed" />
+          </svg>
         </button>
         <div
           style={{
@@ -288,26 +284,30 @@ export default function CharacterWidget() {
           )}
         </div>
         <button
-          style={btnStyle}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
             transitionSlot(setMiddle, MIDDLE_IMAGES.length, 1, 'left')
           }}
         >
-          ›
+          <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path d="M256 0C114.837 0 0 114.837 0 256s114.837 256 256 256 256-114.837 256-256S397.163 0 256 0zm79.083 271.083L228.416 377.749A21.275 21.275 0 0 1 213.333 384a21.277 21.277 0 0 1-15.083-6.251c-8.341-8.341-8.341-21.824 0-30.165L289.835 256l-91.584-91.584c-8.341-8.341-8.341-21.824 0-30.165s21.824-8.341 30.165 0l106.667 106.667c8.341 8.341 8.341 21.823 0 30.165z" fill="#7c3aed" />
+          </svg>
         </button>
       </div>
 
       {/* BOTTOM ROW — legs, top-aligned */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
         <button
-          style={btnStyle}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
             transitionSlot(setBottom, BOTTOM_IMAGES.length, -1, 'left')
           }}
         >
-          ‹
+          <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path transform="scale(-1,1) translate(-512,0)" d="M256 0C114.837 0 0 114.837 0 256s114.837 256 256 256 256-114.837 256-256S397.163 0 256 0zm79.083 271.083L228.416 377.749A21.275 21.275 0 0 1 213.333 384a21.277 21.277 0 0 1-15.083-6.251c-8.341-8.341-8.341-21.824 0-30.165L289.835 256l-91.584-91.584c-8.341-8.341-8.341-21.824 0-30.165s21.824-8.341 30.165 0l106.667 106.667c8.341 8.341 8.341 21.823 0 30.165z" fill="#7c3aed" />
+          </svg>
         </button>
         <div
           style={{
@@ -344,13 +344,15 @@ export default function CharacterWidget() {
           )}
         </div>
         <button
-          style={btnStyle}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
             transitionSlot(setBottom, BOTTOM_IMAGES.length, 1, 'right')
           }}
         >
-          ›
+          <svg width="28" height="28" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path d="M256 0C114.837 0 0 114.837 0 256s114.837 256 256 256 256-114.837 256-256S397.163 0 256 0zm79.083 271.083L228.416 377.749A21.275 21.275 0 0 1 213.333 384a21.277 21.277 0 0 1-15.083-6.251c-8.341-8.341-8.341-21.824 0-30.165L289.835 256l-91.584-91.584c-8.341-8.341-8.341-21.824 0-30.165s21.824-8.341 30.165 0l106.667 106.667c8.341 8.341 8.341 21.823 0 30.165z" fill="#7c3aed" />
+          </svg>
         </button>
       </div>
     </div>
