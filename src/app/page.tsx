@@ -244,14 +244,6 @@ export default function HomePage() {
       setStepError('Este campo es obligatorio.')
       return false
     }
-    if (s.key === 'positive_trait_2' && val === character.positive_trait_1) {
-      setStepError('Los rasgos positivos deben ser diferentes.')
-      return false
-    }
-    if (s.key === 'negative_trait_2' && val === character.negative_trait_1) {
-      setStepError('Los rasgos negativos deben ser diferentes.')
-      return false
-    }
     return true
   }
 
@@ -259,6 +251,13 @@ export default function HomePage() {
     if (!validateStep()) return
     setStepError(null)
     if (step < STEPS.length - 1) {
+      const s = STEPS[step]
+      if (s.key === 'positive_trait_1' && character.positive_trait_2 === character.positive_trait_1) {
+        setCharacter(prev => ({ ...prev, positive_trait_2: '' }))
+      }
+      if (s.key === 'negative_trait_1' && character.negative_trait_2 === character.negative_trait_1) {
+        setCharacter(prev => ({ ...prev, negative_trait_2: '' }))
+      }
       setStep(s => s + 1)
     } else {
       handleSave()
@@ -411,10 +410,14 @@ export default function HomePage() {
             const val = getCurrentValue()
             const isLast = step === STEPS.length - 1
 
-            const selectOptions = s.type === 'select_positive' ? posTraits
+            const excludeId = s.key === 'positive_trait_2' ? character.positive_trait_1
+              : s.key === 'negative_trait_2' ? character.negative_trait_1
+              : null
+
+            const selectOptions = (s.type === 'select_positive' ? posTraits
               : s.type === 'select_negative' ? negTraits
               : s.type === 'select_background' ? backgrounds
-              : []
+              : []).filter(opt => !excludeId || opt.id !== excludeId)
 
             return (
               <div>
@@ -488,6 +491,7 @@ export default function HomePage() {
                     {saving ? 'Guardando…' : isLast ? '¡Crear personaje!' : 'Siguiente →'}
                   </button>
                 </div>
+                <p className="text-text-muted text-xs text-center mt-3">Podrás cambiarlo más tarde</p>
               </div>
             )
           })()}
