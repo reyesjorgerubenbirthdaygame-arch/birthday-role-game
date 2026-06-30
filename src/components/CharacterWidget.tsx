@@ -185,12 +185,12 @@ export default function CharacterWidget() {
     >
       <div style={{
         position: 'absolute',
-        bottom: '1rem',
+        top: '0.5rem',
         left: 0,
         right: 0,
         textAlign: 'center',
-        color: 'rgba(255,255,255,0.06)',
-        fontSize: '0.6rem',
+        color: 'rgba(124, 58, 237, 0.18)',
+        fontSize: '0.65rem',
         letterSpacing: '0.05em',
         pointerEvents: 'none',
         userSelect: 'none',
