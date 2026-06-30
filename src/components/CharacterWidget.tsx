@@ -14,11 +14,11 @@ const TOP_IMAGES = [
   'head_shakira.png',
   'head_van.png',
   'head_zombie.png',
+  'Picture39.png',
 ]
 
 const MIDDLE_IMAGES = [
   'body_adan.png',
-  'body_black.png',
   'body_eve.png',
   'body_frida.png',
   'body_marylin.png',
@@ -26,12 +26,13 @@ const MIDDLE_IMAGES = [
   'body_nadal.png',
   'body_shakira.png',
   'body_van.png',
-  'body_zombie.png',
+  'bottom_marylin.png',
+  'head_black.png',
+  'legs_frida.png',
   'middle_indian.png',
 ]
 
 const BOTTOM_IMAGES = [
-  'bottom_indian.png',
   'legs_adan.png',
   'legs_black.png',
   'legs_eve.png',
@@ -41,7 +42,7 @@ const BOTTOM_IMAGES = [
   'legs_nadal.png',
   'legs_shakira.png',
   'legs_van.png',
-  'legs_zombie.png',
+  'Picture40.png',
 ]
 
 function wrapIndex(i: number, len: number): number {
