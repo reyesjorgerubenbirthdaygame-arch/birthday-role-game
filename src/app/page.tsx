@@ -79,7 +79,7 @@ const STEPS = [
 ]
 
 export default function HomePage() {
-  const [view, setView] = useState<View>('loading')
+  const [view, setView] = useState<View>('auth')
   const [user, setUser] = useState<User | null>(null)
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(calculateTimeLeft())
 
@@ -126,7 +126,7 @@ export default function HomePage() {
       }
       setUser(session.user)
       await loadBuilderData(session.user.id)
-    })
+    }).catch(() => setView('auth'))
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!session) {
@@ -135,7 +135,7 @@ export default function HomePage() {
         return
       }
       setUser(session.user)
-      await loadBuilderData(session.user.id)
+      await loadBuilderData(session.user.id).catch(() => setView('auth'))
     })
 
     return () => subscription.unsubscribe()
