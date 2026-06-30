@@ -119,8 +119,8 @@ export default function CharacterWidget() {
           height: '130px',
           display: 'flex',
           alignItems: 'flex-end',
-          marginLeft: '25%',
-          marginRight: '25%',
+          marginLeft: '30%',
+          marginRight: '30%',
         }}
       >
         {/* current */}
@@ -130,7 +130,7 @@ export default function CharacterWidget() {
           alt=""
           style={{
             ...imgBaseStyle,
-            objectFit: 'cover',
+            objectFit: 'contain',
             objectPosition: 'bottom',
             animation: isTransitioning
               ? `slideOutLeft ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 0ms forwards`
@@ -145,7 +145,7 @@ export default function CharacterWidget() {
             alt=""
             style={{
               ...imgBaseStyle,
-              objectFit: 'cover',
+              objectFit: 'contain',
               objectPosition: 'bottom',
               animation: `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 0ms both`,
             }}
@@ -159,8 +159,8 @@ export default function CharacterWidget() {
           ...slotStyle,
           height: '150px',
           flexShrink: 0,
-          marginLeft: '25%',
-          marginRight: '25%',
+          marginLeft: '30%',
+          marginRight: '30%',
         }}
       >
         <img
@@ -169,7 +169,7 @@ export default function CharacterWidget() {
           alt=""
           style={{
             ...imgBaseStyle,
-            objectFit: 'cover',
+            objectFit: 'contain',
             objectPosition: 'center',
             animation: isTransitioning
               ? `slideOutRight ${ANIM_DURATION}ms cubic-bezier(0.2,0,0.4,1) 80ms forwards`
@@ -183,7 +183,7 @@ export default function CharacterWidget() {
             alt=""
             style={{
               ...imgBaseStyle,
-              objectFit: 'cover',
+              objectFit: 'contain',
               objectPosition: 'center',
               animation: `slideInLeft ${ANIM_DURATION}ms cubic-bezier(0.2,0,0.4,1) 80ms both`,
             }}
@@ -198,8 +198,8 @@ export default function CharacterWidget() {
           height: '110px',
           display: 'flex',
           alignItems: 'flex-start',
-          marginLeft: '25%',
-          marginRight: '25%',
+          marginLeft: '30%',
+          marginRight: '30%',
         }}
       >
         <img
@@ -208,7 +208,7 @@ export default function CharacterWidget() {
           alt=""
           style={{
             ...imgBaseStyle,
-            objectFit: 'cover',
+            objectFit: 'contain',
             objectPosition: 'top',
             animation: isTransitioning
               ? `slideOutLeft ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 40ms forwards`
@@ -222,7 +222,7 @@ export default function CharacterWidget() {
             alt=""
             style={{
               ...imgBaseStyle,
-              objectFit: 'cover',
+              objectFit: 'contain',
               objectPosition: 'top',
               animation: `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 40ms both`,
             }}
