@@ -47,13 +47,6 @@ const STEPS = [
     type: 'intro' as const,
   },
   {
-    key: 'character_name',
-    title: 'Nombre del personaje',
-    hint: 'Dale un nombre a tu héroe',
-    type: 'text' as const,
-    placeholder: 'ej. Aria Sombrascura',
-  },
-  {
     key: 'positive_trait_1',
     title: 'Primera virtud',
     hint: 'Elige el rasgo que te define en la luz',
@@ -82,6 +75,13 @@ const STEPS = [
     title: 'Trasfondo',
     hint: 'Tu historia antes de que todo comience',
     type: 'select_background' as const,
+  },
+  {
+    key: 'character_name',
+    title: 'Nombra a tu personaje',
+    hint: 'Dale un nombre a tu héroe',
+    type: 'text' as const,
+    placeholder: 'ej. Aria Sombrascura',
   },
 ]
 
