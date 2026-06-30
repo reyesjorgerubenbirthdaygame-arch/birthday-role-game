@@ -43,46 +43,95 @@ const BOTTOM_IMAGES = [
   'legs_zombie.jpg',
 ]
 
-function pickRandom<T>(arr: T[], exclude?: T): T {
-  const pool = exclude !== undefined ? arr.filter(x => x !== exclude) : arr
-  return pool[Math.floor(Math.random() * pool.length)]
+function wrapIndex(i: number, len: number): number {
+  return ((i % len) + len) % len
 }
 
 interface SlotState {
-  current: string
-  next: string
+  index: number
+  nextIndex: number
+  transitioning: boolean
+  enterFrom: 'left' | 'right'
 }
 
 const ANIM_DURATION = 400 // ms
 
+function randomNextIndex(currentIndex: number, len: number): number {
+  return wrapIndex(
+    Math.floor(Math.random() * (len - 1)) + currentIndex + 1,
+    len
+  )
+}
+
 export default function CharacterWidget() {
   const [top, setTop] = useState<SlotState>(() => {
-    const img = pickRandom(TOP_IMAGES)
-    return { current: img, next: img }
+    const index = Math.floor(Math.random() * TOP_IMAGES.length)
+    return { index, nextIndex: index, transitioning: false, enterFrom: 'right' }
   })
   const [middle, setMiddle] = useState<SlotState>(() => {
-    const img = pickRandom(MIDDLE_IMAGES)
-    return { current: img, next: img }
+    const index = Math.floor(Math.random() * MIDDLE_IMAGES.length)
+    return { index, nextIndex: index, transitioning: false, enterFrom: 'left' }
   })
   const [bottom, setBottom] = useState<SlotState>(() => {
-    const img = pickRandom(BOTTOM_IMAGES)
-    return { current: img, next: img }
+    const index = Math.floor(Math.random() * BOTTOM_IMAGES.length)
+    return { index, nextIndex: index, transitioning: false, enterFrom: 'right' }
   })
 
-  const [isTransitioning, setIsTransitioning] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  const stopAutoShuffle = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+  }, [])
+
+  const transitionSlot = useCallback(
+    (
+      setter: React.Dispatch<React.SetStateAction<SlotState>>,
+      len: number,
+      delta: number,
+      enterFrom: 'left' | 'right'
+    ) => {
+      setter(prev => {
+        if (prev.transitioning) return prev
+        const nextIndex = wrapIndex(prev.index + delta, len)
+        return { ...prev, nextIndex, transitioning: true, enterFrom }
+      })
+      setTimeout(() => {
+        setter(prev => {
+          if (!prev.transitioning) return prev
+          return { ...prev, index: prev.nextIndex, transitioning: false }
+        })
+      }, ANIM_DURATION + 100)
+    },
+    []
+  )
+
   const cycle = useCallback(() => {
-    setTop(prev => ({ ...prev, next: pickRandom(TOP_IMAGES, prev.current) }))
-    setMiddle(prev => ({ ...prev, next: pickRandom(MIDDLE_IMAGES, prev.current) }))
-    setBottom(prev => ({ ...prev, next: pickRandom(BOTTOM_IMAGES, prev.current) }))
-    setIsTransitioning(true)
+    setTop(prev => ({
+      ...prev,
+      nextIndex: randomNextIndex(prev.index, TOP_IMAGES.length),
+      transitioning: true,
+      enterFrom: 'right',
+    }))
+    setMiddle(prev => ({
+      ...prev,
+      nextIndex: randomNextIndex(prev.index, MIDDLE_IMAGES.length),
+      transitioning: true,
+      enterFrom: 'left',
+    }))
+    setBottom(prev => ({
+      ...prev,
+      nextIndex: randomNextIndex(prev.index, BOTTOM_IMAGES.length),
+      transitioning: true,
+      enterFrom: 'right',
+    }))
 
     setTimeout(() => {
-      setTop(prev => ({ current: prev.next, next: prev.next }))
-      setMiddle(prev => ({ current: prev.next, next: prev.next }))
-      setBottom(prev => ({ current: prev.next, next: prev.next }))
-      setIsTransitioning(false)
+      setTop(prev => ({ ...prev, index: prev.nextIndex, transitioning: false }))
+      setMiddle(prev => ({ ...prev, index: prev.nextIndex, transitioning: false }))
+      setBottom(prev => ({ ...prev, index: prev.nextIndex, transitioning: false }))
     }, ANIM_DURATION + 100)
   }, [])
 
@@ -93,11 +142,12 @@ export default function CharacterWidget() {
     }
   }, [cycle])
 
-  // Slot style helpers
   const slotStyle: React.CSSProperties = {
     position: 'relative',
     overflow: 'hidden',
-    // width: '100%' removed — margins now set width implicitly
+    flex: 1,
+    maxWidth: '40%',
+    margin: '0 auto',
   }
 
   const imgBaseStyle: React.CSSProperties = {
@@ -107,6 +157,26 @@ export default function CharacterWidget() {
     width: '100%',
     height: '100%',
   }
+
+  const btnStyle: React.CSSProperties = {
+    background: 'transparent',
+    border: 'none',
+    color: '#7c3aed',
+    fontSize: '1.4rem',
+    padding: '0.25rem 0.5rem',
+    cursor: 'pointer',
+    lineHeight: 1,
+  }
+
+  const getExitAnim = (enterFrom: 'left' | 'right', delayMs: number): string =>
+    enterFrom === 'right'
+      ? `slideOutLeft ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) ${delayMs}ms forwards`
+      : `slideOutRight ${ANIM_DURATION}ms cubic-bezier(0.2,0,0.4,1) ${delayMs}ms forwards`
+
+  const getEnterAnim = (enterFrom: 'left' | 'right', delayMs: number): string =>
+    enterFrom === 'right'
+      ? `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) ${delayMs}ms both`
+      : `slideInLeft ${ANIM_DURATION}ms cubic-bezier(0.2,0,0.4,1) ${delayMs}ms both`
 
   return (
     <div
@@ -121,121 +191,167 @@ export default function CharacterWidget() {
       }}
     >
       {/* TOP ROW — head, bottom-aligned */}
-      <div
-        style={{
-          ...slotStyle,
-          height: '130px',
-          display: 'flex',
-          alignItems: 'flex-end',
-          marginLeft: '30%',
-          marginRight: '30%',
-        }}
-      >
-        {/* current */}
-        <img
-          key={`top-cur-${top.current}`}
-          src={`/characters/top/${top.current}`}
-          alt=""
-          style={{
-            ...imgBaseStyle,
-            objectFit: 'contain',
-            objectPosition: 'bottom',
-            animation: isTransitioning
-              ? `slideOutLeft ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 0ms forwards`
-              : undefined,
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <button
+          style={btnStyle}
+          onClick={() => {
+            stopAutoShuffle()
+            transitionSlot(setTop, TOP_IMAGES.length, -1, 'left')
           }}
-        />
-        {/* next — only visible while transitioning */}
-        {isTransitioning && (
+        >
+          ‹
+        </button>
+        <div
+          style={{
+            ...slotStyle,
+            height: '173px',
+            display: 'flex',
+            alignItems: 'flex-end',
+          }}
+        >
           <img
-            key={`top-next-${top.next}`}
-            src={`/characters/top/${top.next}`}
+            key={`top-cur-${top.index}`}
+            src={`/characters/top/${TOP_IMAGES[top.index]}`}
             alt=""
             style={{
               ...imgBaseStyle,
               objectFit: 'contain',
               objectPosition: 'bottom',
-              animation: `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 0ms both`,
+              animation: top.transitioning ? getExitAnim(top.enterFrom, 0) : undefined,
             }}
           />
-        )}
+          {top.transitioning && (
+            <img
+              key={`top-next-${top.nextIndex}`}
+              src={`/characters/top/${TOP_IMAGES[top.nextIndex]}`}
+              alt=""
+              style={{
+                ...imgBaseStyle,
+                objectFit: 'contain',
+                objectPosition: 'bottom',
+                animation: getEnterAnim(top.enterFrom, 0),
+              }}
+            />
+          )}
+        </div>
+        <button
+          style={btnStyle}
+          onClick={() => {
+            stopAutoShuffle()
+            transitionSlot(setTop, TOP_IMAGES.length, 1, 'right')
+          }}
+        >
+          ›
+        </button>
       </div>
 
-      {/* MIDDLE ROW — body, fixed height, opposite direction */}
-      <div
-        style={{
-          ...slotStyle,
-          height: '150px',
-          flexShrink: 0,
-          marginLeft: '30%',
-          marginRight: '30%',
-        }}
-      >
-        <img
-          key={`mid-cur-${middle.current}`}
-          src={`/characters/middle/${middle.current}`}
-          alt=""
-          style={{
-            ...imgBaseStyle,
-            objectFit: 'contain',
-            objectPosition: 'center',
-            animation: isTransitioning
-              ? `slideOutRight ${ANIM_DURATION}ms cubic-bezier(0.2,0,0.4,1) 80ms forwards`
-              : undefined,
+      {/* MIDDLE ROW — body, opposite direction */}
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <button
+          style={btnStyle}
+          onClick={() => {
+            stopAutoShuffle()
+            transitionSlot(setMiddle, MIDDLE_IMAGES.length, -1, 'right')
           }}
-        />
-        {isTransitioning && (
+        >
+          ‹
+        </button>
+        <div
+          style={{
+            ...slotStyle,
+            height: '150px',
+          }}
+        >
           <img
-            key={`mid-next-${middle.next}`}
-            src={`/characters/middle/${middle.next}`}
+            key={`mid-cur-${middle.index}`}
+            src={`/characters/middle/${MIDDLE_IMAGES[middle.index]}`}
             alt=""
             style={{
               ...imgBaseStyle,
               objectFit: 'contain',
               objectPosition: 'center',
-              animation: `slideInLeft ${ANIM_DURATION}ms cubic-bezier(0.2,0,0.4,1) 80ms both`,
+              animation: middle.transitioning ? getExitAnim(middle.enterFrom, 80) : undefined,
             }}
           />
-        )}
+          {middle.transitioning && (
+            <img
+              key={`mid-next-${middle.nextIndex}`}
+              src={`/characters/middle/${MIDDLE_IMAGES[middle.nextIndex]}`}
+              alt=""
+              style={{
+                ...imgBaseStyle,
+                objectFit: 'contain',
+                objectPosition: 'center',
+                animation: getEnterAnim(middle.enterFrom, 80),
+              }}
+            />
+          )}
+        </div>
+        <button
+          style={btnStyle}
+          onClick={() => {
+            stopAutoShuffle()
+            transitionSlot(setMiddle, MIDDLE_IMAGES.length, 1, 'left')
+          }}
+        >
+          ›
+        </button>
       </div>
 
       {/* BOTTOM ROW — legs, top-aligned */}
-      <div
-        style={{
-          ...slotStyle,
-          height: '110px',
-          display: 'flex',
-          alignItems: 'flex-start',
-          marginLeft: '30%',
-          marginRight: '30%',
-        }}
-      >
-        <img
-          key={`bot-cur-${bottom.current}`}
-          src={`/characters/bottom/${bottom.current}`}
-          alt=""
-          style={{
-            ...imgBaseStyle,
-            objectFit: 'contain',
-            objectPosition: 'top',
-            animation: isTransitioning
-              ? `slideOutLeft ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 40ms forwards`
-              : undefined,
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <button
+          style={btnStyle}
+          onClick={() => {
+            stopAutoShuffle()
+            transitionSlot(setBottom, BOTTOM_IMAGES.length, -1, 'left')
           }}
-        />
-        {isTransitioning && (
+        >
+          ‹
+        </button>
+        <div
+          style={{
+            ...slotStyle,
+            height: '225px',
+            display: 'flex',
+            alignItems: 'flex-start',
+            paddingBottom: '1rem',
+          }}
+        >
           <img
-            key={`bot-next-${bottom.next}`}
-            src={`/characters/bottom/${bottom.next}`}
+            key={`bot-cur-${bottom.index}`}
+            src={`/characters/bottom/${BOTTOM_IMAGES[bottom.index]}`}
             alt=""
             style={{
               ...imgBaseStyle,
               objectFit: 'contain',
               objectPosition: 'top',
-              animation: `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) 40ms both`,
+              animation: bottom.transitioning ? getExitAnim(bottom.enterFrom, 40) : undefined,
             }}
           />
-        )}
+          {bottom.transitioning && (
+            <img
+              key={`bot-next-${bottom.nextIndex}`}
+              src={`/characters/bottom/${BOTTOM_IMAGES[bottom.nextIndex]}`}
+              alt=""
+              style={{
+                ...imgBaseStyle,
+                objectFit: 'contain',
+                objectPosition: 'top',
+                animation: getEnterAnim(bottom.enterFrom, 40),
+              }}
+            />
+          )}
+        </div>
+        <button
+          style={btnStyle}
+          onClick={() => {
+            stopAutoShuffle()
+            transitionSlot(setBottom, BOTTOM_IMAGES.length, 1, 'right')
+          }}
+        >
+          ›
+        </button>
       </div>
     </div>
   )
