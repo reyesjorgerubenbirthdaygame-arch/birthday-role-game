@@ -14,13 +14,13 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError(null)
     setMessage(null)
+    const supabase = createClient()
 
     if (mode === 'register') {
       const { error } = await supabase.auth.signUp({
