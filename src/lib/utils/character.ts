@@ -3,7 +3,6 @@ import type { Player } from '@/lib/types/database'
 export function isPlayerComplete(player: Partial<Player>): boolean {
   return !!(
     player.character_name?.trim() &&
-    player.creature?.trim() &&
     player.positive_trait_1 &&
     player.positive_trait_2 &&
     player.negative_trait_1 &&

@@ -23,7 +23,6 @@ export function CharacterForm({
   isLocked,
 }: CharacterFormProps) {
   const [characterName, setCharacterName] = useState(player?.character_name ?? '')
-  const [creature, setCreature] = useState(player?.creature ?? '')
   const [positiveTrait1, setPositiveTrait1] = useState(player?.positive_trait_1 ?? '')
   const [positiveTrait2, setPositiveTrait2] = useState(player?.positive_trait_2 ?? '')
   const [negativeTrait1, setNegativeTrait1] = useState(player?.negative_trait_1 ?? '')
@@ -51,7 +50,6 @@ export function CharacterForm({
     const data = {
       user_id: userId,
       character_name: characterName || null,
-      creature: creature || null,
       positive_trait_1: positiveTrait1 || null,
       positive_trait_2: positiveTrait2 || null,
       negative_trait_1: negativeTrait1 || null,
@@ -88,17 +86,6 @@ export function CharacterForm({
           onChange={e => setCharacterName(e.target.value)}
           disabled={isLocked}
           placeholder="ej. Aria Sombrascura"
-          className={inputClass}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label className="text-text-secondary text-sm">Tipo de criatura <span className="text-text-muted">(ej. humano, fantasma, dragón…)</span></label>
-        <input
-          value={creature}
-          onChange={e => setCreature(e.target.value)}
-          disabled={isLocked}
-          placeholder="humano"
           className={inputClass}
         />
       </div>
