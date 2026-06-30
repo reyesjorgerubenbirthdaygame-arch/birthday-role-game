@@ -143,38 +143,42 @@ export default function HomePage() {
   }, [])
 
   async function loadBuilderData(userId: string) {
-    const supabase = createClient()
-    const locked = EVENT_DATE <= new Date()
-    setIsLocked(locked)
+    try {
+      const supabase = createClient()
+      const locked = EVENT_DATE <= new Date()
+      setIsLocked(locked)
 
-    const [posRes, negRes, bgRes, playerRes] = await Promise.all([
-      supabase.from('trait_options').select('id, name').eq('type', 'positive').order('name'),
-      supabase.from('trait_options').select('id, name').eq('type', 'negative').order('name'),
-      supabase.from('background_options').select('id, name').order('name'),
-      supabase.from('players').select('*').eq('user_id', userId).maybeSingle(),
-    ])
+      const [posRes, negRes, bgRes, playerRes] = await Promise.all([
+        supabase.from('trait_options').select('id, name').eq('type', 'positive').order('name'),
+        supabase.from('trait_options').select('id, name').eq('type', 'negative').order('name'),
+        supabase.from('background_options').select('id, name').order('name'),
+        supabase.from('players').select('*').eq('user_id', userId).maybeSingle(),
+      ])
 
-    if (posRes.data) setPosTraits(posRes.data as TraitOption[])
-    if (negRes.data) setNegTraits(negRes.data as TraitOption[])
-    if (bgRes.data) setBackgrounds(bgRes.data as BackgroundOption[])
+      if (posRes.data) setPosTraits(posRes.data as TraitOption[])
+      if (negRes.data) setNegTraits(negRes.data as TraitOption[])
+      if (bgRes.data) setBackgrounds(bgRes.data as BackgroundOption[])
 
-    const player = playerRes.data as PlayerRecord | null
+      const player = playerRes.data as PlayerRecord | null
 
-    if (player?.is_complete) {
-      setCompletedPlayer(player)
-      setView('complete')
-    } else {
-      if (player) {
-        setCharacter({
-          character_name: player.character_name ?? '',
-          positive_trait_1: player.positive_trait_1 ?? '',
-          positive_trait_2: player.positive_trait_2 ?? '',
-          negative_trait_1: player.negative_trait_1 ?? '',
-          negative_trait_2: player.negative_trait_2 ?? '',
-          background: player.background ?? '',
-        })
+      if (player?.is_complete) {
+        setCompletedPlayer(player)
+        setView('complete')
+      } else {
+        if (player) {
+          setCharacter({
+            character_name: player.character_name ?? '',
+            positive_trait_1: player.positive_trait_1 ?? '',
+            positive_trait_2: player.positive_trait_2 ?? '',
+            negative_trait_1: player.negative_trait_1 ?? '',
+            negative_trait_2: player.negative_trait_2 ?? '',
+            background: player.background ?? '',
+          })
+        }
+        setView('building')
       }
-      setView('building')
+    } catch {
+      setView('auth')
     }
   }
 
@@ -184,22 +188,25 @@ export default function HomePage() {
     setAuthLoading(true)
     setAuthError(null)
     setAuthMessage(null)
-    const supabase = createClient()
-
-    if (authMode === 'register') {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
-      })
-      if (error) setAuthError(error.message)
-      else setAuthMessage('Revisa tu correo para confirmar tu cuenta.')
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) setAuthError(error.message)
+    try {
+      const supabase = createClient()
+      if (authMode === 'register') {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
+        })
+        if (error) setAuthError(error.message)
+        else setAuthMessage('Revisa tu correo para confirmar tu cuenta.')
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        if (error) setAuthError(error.message)
+      }
+    } catch {
+      setAuthError('Error de conexión. Inténtalo de nuevo.')
+    } finally {
+      setAuthLoading(false)
     }
-
-    setAuthLoading(false)
   }
 
   async function handleGoogleSignIn() {
