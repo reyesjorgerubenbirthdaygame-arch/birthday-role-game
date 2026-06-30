@@ -40,6 +40,12 @@ interface PlayerRecord extends CharacterData {
 
 const STEPS = [
   {
+    key: '' as const,
+    title: '¿Quién serás?',
+    hint: 'El evento más épico se acerca',
+    type: 'intro' as const,
+  },
+  {
     key: 'character_name',
     title: 'Nombre del personaje',
     hint: 'Dale un nombre a tu héroe',
@@ -229,16 +235,20 @@ export default function HomePage() {
   // Builder handlers
   function getCurrentValue(): string {
     const s = STEPS[step]
+    if (s.type === 'intro' || !s.key) return ''
     return character[s.key as keyof CharacterData] ?? ''
   }
 
   function setCurrentValue(val: string) {
     setStepError(null)
-    setCharacter(prev => ({ ...prev, [STEPS[step].key]: val }))
+    const s = STEPS[step]
+    if (s.type === 'intro' || !s.key) return
+    setCharacter(prev => ({ ...prev, [s.key]: val }))
   }
 
   function validateStep(): boolean {
     const s = STEPS[step]
+    if (s.type === 'intro') return true
     const val = character[s.key as keyof CharacterData]
     if (!val?.trim()) {
       setStepError('Este campo es obligatorio.')
@@ -444,7 +454,13 @@ export default function HomePage() {
                   <h2 className="text-xl font-bold text-text-primary mb-1">{s.title}</h2>
                   <p className="text-text-muted text-sm mb-5">{s.hint}</p>
 
-                  {s.type === 'text' ? (
+                  {s.type === 'intro' ? (
+                    <p className="text-text-secondary text-base leading-relaxed">
+                      En este concurso tendrás que encarnar un personaje y disfrazarte como él el día del evento.
+                      Puede ser alguien real o imaginario — un héroe, una figura histórica, un personaje de ficción...
+                      ¡tú decides!
+                    </p>
+                  ) : s.type === 'text' ? (
                     <input
                       type="text"
                       value={val}
