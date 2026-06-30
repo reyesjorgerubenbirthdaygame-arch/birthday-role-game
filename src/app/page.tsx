@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 import type { TraitOption, BackgroundOption } from '@/lib/types/database'
@@ -111,14 +111,6 @@ export default function HomePage() {
     negative_trait_2: '',
     background: '',
   })
-  const progressPathRef = useRef<SVGPathElement>(null)
-  const [pathLength, setPathLength] = useState(0)
-
-  useEffect(() => {
-    if (progressPathRef.current) {
-      setPathLength(progressPathRef.current.getTotalLength())
-    }
-  }, [])
   const [completedPlayer, setCompletedPlayer] = useState<PlayerRecord | null>(null)
   const [stepError, setStepError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -459,28 +451,33 @@ export default function HomePage() {
                     preserveAspectRatio="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    {/* Track path */}
+                    <defs>
+                      <clipPath id="progress-clip">
+                        <rect x="0" y="-10" width={`${progress}%`} height="240" style={{ transition: 'width 0.5s ease' }} />
+                      </clipPath>
+                    </defs>
+                    {/* Track — full dashed path, always visible, dimmed */}
                     <path
                       d="M2.5 164.94C130 85 257 6 303 2.5 349 -1 228 122 277 143 326 164 506 116 596 128 686 140 743 221 816 216 889 211 944 116 1036 98 1128 80 1285 118 1370 109 1455 100 1485 48 1546 46 1606 44 1669 69 1732.5 94"
                       fill="none"
                       stroke="#2a2a3e"
                       strokeWidth="6"
                       strokeLinecap="round"
+                      strokeDasharray="27.5 20.625"
                     />
-                    {/* Active (drawn) path */}
+                    {/* Active — same dashed path, clipped to progress width */}
                     <path
-                      ref={progressPathRef}
                       d="M2.5 164.94C130 85 257 6 303 2.5 349 -1 228 122 277 143 326 164 506 116 596 128 686 140 743 221 816 216 889 211 944 116 1036 98 1128 80 1285 118 1370 109 1455 100 1485 48 1546 46 1606 44 1669 69 1732.5 94"
                       fill="none"
                       stroke="#7c3aed"
                       strokeWidth="6"
                       strokeLinecap="round"
-                      strokeDasharray={pathLength || undefined}
-                      strokeDashoffset={pathLength ? pathLength * (1 - progress / 100) : undefined}
-                      style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+                      strokeDasharray="27.5 20.625"
+                      clipPath="url(#progress-clip)"
+                      style={{ transition: 'clip-path 0.5s ease' }}
                     />
                     {/* Flag icon at end of path */}
-                    <g transform="translate(1700, 60) scale(0.5)">
+                    <g transform="translate(1640, 20) scale(1.5)">
                       <path
                         d="M14.678 57.95 1.068-.298a1.931 1.931 0 0 0 1.34-2.38L4.878 11.585a2.414 2.414 0 0 0-2.975-1.675l-.138.038A2.414 2.414 0 0 0 .09 12.922L12.299 56.61a1.931 1.931 0 0 0 2.379 1.34zM57.67 27.42a46.256 46.256 0 0 1-10.64-7.32.95.95 0 0 1-.27-.97A136.854 136.854 0 0 0 50.27.95c.12-1.02-.43-1.32-1.01-.62-11.38 13.61-31.07-2.49-42.79 9.88.14.263.251.542.33.83l7.92 28.36c11.74-12.22 31.36 3.78 42.72-9.8.58-.7.69-1.98.23-2.18z"
                         fill="#7c3aed"
