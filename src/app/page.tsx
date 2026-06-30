@@ -1,12 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
+const EVENT_DATE = new Date('2026-08-01T10:00:00Z') // Aug 1 at 12:00 Spain time (CEST = UTC+2)
+
 type Mode = 'register' | 'login'
 
+interface TimeLeft {
+  days: number
+  hours: number
+  minutes: number
+  seconds: number
+}
+
+function calculateTimeLeft(): TimeLeft | null {
+  const diff = EVENT_DATE.getTime() - Date.now()
+  if (diff <= 0) return null
+  return {
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+  }
+}
+
+function pad(n: number): string {
+  return String(n).padStart(2, '0')
+}
+
 export default function HomePage() {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(calculateTimeLeft)
   const [mode, setMode] = useState<Mode>('register')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -14,6 +39,13 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeLeft(calculateTimeLeft())
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -40,7 +72,32 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-bg-primary flex items-center justify-center p-8">
+    <main className="min-h-screen bg-bg-primary flex flex-col items-center justify-center p-8 gap-8">
+      {/* Countdown section */}
+      <div className="bg-bg-card rounded-lg p-8 w-full max-w-md shadow-md text-center">
+        <p className="text-text-muted text-sm uppercase tracking-widest mb-4">El evento comienza en</p>
+        {timeLeft ? (
+          <div className="flex justify-center gap-6">
+            {[
+              { value: timeLeft.days, label: 'días' },
+              { value: timeLeft.hours, label: 'horas' },
+              { value: timeLeft.minutes, label: 'minutos' },
+              { value: timeLeft.seconds, label: 'segundos' },
+            ].map(({ value, label }) => (
+              <div key={label} className="flex flex-col items-center">
+                <span className="text-5xl font-bold text-accent tabular-nums">
+                  {label === 'días' ? value : pad(value)}
+                </span>
+                <span className="text-text-muted text-xs mt-1 uppercase tracking-wide">{label}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-2xl font-bold text-accent">¡El evento ha comenzado!</p>
+        )}
+      </div>
+
+      {/* Auth form */}
       <div className="bg-bg-card rounded-lg p-8 w-full max-w-md shadow-md">
         <h1 className="text-3xl font-bold text-text-primary mb-6">Birthday Role Game</h1>
 

@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { CharacterForm } from '@/components/character/CharacterForm'
 
@@ -26,6 +27,12 @@ export default async function CharacterPage() {
   return (
     <main className="min-h-screen bg-bg-primary text-text-primary p-8">
       <div className="max-w-lg mx-auto">
+        <Link
+          href="/dashboard"
+          className="inline-block text-accent hover:text-accent-hover text-sm mb-6"
+        >
+          ← Volver al panel
+        </Link>
         <h1 className="text-3xl font-bold mb-8">Tu personaje</h1>
         <CharacterForm
           player={player}
