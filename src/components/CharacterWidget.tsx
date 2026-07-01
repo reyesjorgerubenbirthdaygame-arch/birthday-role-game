@@ -92,8 +92,15 @@ export default function CharacterWidget({ onEasterEggUnlocked }: CharacterWidget
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const easterEggTriggered = useRef(false)
+  const userInitiated = useRef(false)
+  const onEasterEggUnlockedRef = useRef(onEasterEggUnlocked)
   const snackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showSnack, setShowSnack] = useState(false)
+
+  // Keep the callback ref in sync with the latest prop without adding it to effect deps
+  useEffect(() => {
+    onEasterEggUnlockedRef.current = onEasterEggUnlocked
+  })
 
   const stopAutoShuffle = useCallback(() => {
     if (timerRef.current) {
@@ -109,6 +116,7 @@ export default function CharacterWidget({ onEasterEggUnlocked }: CharacterWidget
       delta: number,
       enterFrom: 'left' | 'right'
     ) => {
+      userInitiated.current = true
       setter(prev => {
         if (prev.transitioning) return prev
         const nextIndex = wrapIndex(prev.index + delta, len)
@@ -154,6 +162,7 @@ export default function CharacterWidget({ onEasterEggUnlocked }: CharacterWidget
   const restartAutoShuffle = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current)
     timerRef.current = setInterval(cycle, 5000)
+    userInitiated.current = false
   }, [cycle])
 
   const scheduleResume = useCallback(() => {
@@ -176,6 +185,7 @@ export default function CharacterWidget({ onEasterEggUnlocked }: CharacterWidget
   useEffect(() => {
     if (top.transitioning || middle.transitioning || bottom.transitioning) return
     if (easterEggTriggered.current) return
+    if (!userInitiated.current) return
     const topChar = extractCharacter(TOP_IMAGES[top.index])
     const midChar = extractCharacter(MIDDLE_IMAGES[middle.index])
     const botChar = extractCharacter(BOTTOM_IMAGES[bottom.index])
@@ -183,9 +193,9 @@ export default function CharacterWidget({ onEasterEggUnlocked }: CharacterWidget
       easterEggTriggered.current = true
       setShowSnack(true)
       snackTimerRef.current = setTimeout(() => setShowSnack(false), 4000)
-      onEasterEggUnlocked?.()
+      onEasterEggUnlockedRef.current?.()
     }
-  }, [top.index, middle.index, bottom.index, top.transitioning, middle.transitioning, bottom.transitioning, onEasterEggUnlocked])
+  }, [top.index, middle.index, bottom.index, top.transitioning, middle.transitioning, bottom.transitioning])
 
   const slotStyle: React.CSSProperties = {
     position: 'relative',
