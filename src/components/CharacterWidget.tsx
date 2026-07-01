@@ -14,7 +14,6 @@ const TOP_IMAGES = [
   'head_shakira.png',
   'head_van.png',
   'head_zombie.png',
-  'Picture39.png',
 ]
 
 const MIDDLE_IMAGES = [
@@ -28,9 +27,6 @@ const MIDDLE_IMAGES = [
   'body_shakira.png',
   'body_van.png',
   'body_zombie.png',
-  'bottom_marylin.png',
-  'head_black.png',
-  'legs_frida.png',
   'middle_indian.png',
 ]
 
@@ -46,7 +42,6 @@ const BOTTOM_IMAGES = [
   'legs_shakira.png',
   'legs_van.png',
   'legs_zombie.png',
-  'Picture40.png',
 ]
 
 function wrapIndex(i: number, len: number): number {
@@ -84,6 +79,7 @@ export default function CharacterWidget() {
   })
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const stopAutoShuffle = useCallback(() => {
     if (timerRef.current) {
@@ -91,6 +87,19 @@ export default function CharacterWidget() {
       timerRef.current = null
     }
   }, [])
+
+  const restartAutoShuffle = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    timerRef.current = setInterval(cycle, 5000)
+  }, [cycle])
+
+  const scheduleResume = useCallback(() => {
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+    resumeTimerRef.current = setTimeout(() => {
+      restartAutoShuffle()
+      resumeTimerRef.current = null
+    }, 10000)
+  }, [restartAutoShuffle])
 
   const transitionSlot = useCallback(
     (
@@ -145,6 +154,7 @@ export default function CharacterWidget() {
     timerRef.current = setInterval(cycle, 5000)
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     }
   }, [cycle])
 
@@ -195,6 +205,7 @@ export default function CharacterWidget() {
         right: 0,
         textAlign: 'center',
         color: 'var(--color-accent)',
+        opacity: 0.3,
         fontSize: '1rem',
         letterSpacing: '0.05em',
         pointerEvents: 'none',
@@ -202,7 +213,7 @@ export default function CharacterWidget() {
         zIndex: 0,
         padding: '0 1rem',
       }}>
-        esto no sirve para nada pero estÃ¡ entretenido
+        esto no sirve para nada pero está entretenido
       </div>
       {/* TOP ROW â€” head, bottom-aligned */}
       <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '0.5rem', position: 'relative', zIndex: 1 }}>
@@ -210,6 +221,7 @@ export default function CharacterWidget() {
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
+            scheduleResume()
             transitionSlot(setTop, TOP_IMAGES.length, -1, 'left')
           }}
         >
@@ -254,6 +266,7 @@ export default function CharacterWidget() {
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
+            scheduleResume()
             transitionSlot(setTop, TOP_IMAGES.length, 1, 'right')
           }}
         >
@@ -269,6 +282,7 @@ export default function CharacterWidget() {
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
+            scheduleResume()
             transitionSlot(setMiddle, MIDDLE_IMAGES.length, -1, 'right')
           }}
         >
@@ -311,6 +325,7 @@ export default function CharacterWidget() {
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
+            scheduleResume()
             transitionSlot(setMiddle, MIDDLE_IMAGES.length, 1, 'left')
           }}
         >
@@ -326,6 +341,7 @@ export default function CharacterWidget() {
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
+            scheduleResume()
             transitionSlot(setBottom, BOTTOM_IMAGES.length, -1, 'left')
           }}
         >
@@ -371,6 +387,7 @@ export default function CharacterWidget() {
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
             stopAutoShuffle()
+            scheduleResume()
             transitionSlot(setBottom, BOTTOM_IMAGES.length, 1, 'right')
           }}
         >
