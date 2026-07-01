@@ -45,6 +45,21 @@ const STEPS = [
     title: '¿Quién serás?',
     hint: 'La herencia del tio George está por decidirse',
     type: 'intro' as const,
+    body: 'En este concurso tendrás que encarnar un personaje y disfrazarte como él el día del evento. Puede ser alguien real o imaginario, un héroe, una figura histórica, un personaje de ficción... ¡tú decides!',
+  },
+  {
+    key: '' as const,
+    title: 'Tu personaje',
+    hint: '',
+    type: 'intro' as const,
+    body: 'Además del personaje (disfraz) escogido, tendrás que dar un poco de profundidad a tu protagonista. Escoger un par de puntos fuertes, débiles y un pasado. Estas características influirán en el concurso, pero tú decides si las escoges para crear un personaje interesante o desde un punto de vista estratégico. Lo importante es que la decisión es tuya, puedes reescribir la historia, ¿Quién dijo que Blancanieves no puede ser intimidante?',
+  },
+  {
+    key: 'character_name',
+    title: 'Nombra a tu personaje',
+    hint: 'Dale un nombre a tu héroe',
+    type: 'text' as const,
+    placeholder: 'ej. Aria Sombrascura',
   },
   {
     key: 'positive_trait_1',
@@ -73,15 +88,8 @@ const STEPS = [
   {
     key: 'background',
     title: 'Trasfondo',
-    hint: 'Todos queremos una buena historia, pero luego tendrás que interpretarla...',
+    hint: 'Piensa en la historia que vas a contar y asegurate que es buena, luego tendrás que ser convincente de que todas las piezas cuadran.',
     type: 'select_background' as const,
-  },
-  {
-    key: 'character_name',
-    title: 'Nombra a tu personaje',
-    hint: 'Dale un nombre a tu héroe',
-    type: 'text' as const,
-    placeholder: 'ej. Aria Sombrascura',
   },
 ]
 
@@ -495,9 +503,7 @@ export default function HomePage() {
 
                   {s.type === 'intro' ? (
                     <p className="text-text-secondary text-base leading-relaxed">
-                      En este concurso tendrás que encarnar un personaje y disfrazarte como él el día del evento.
-                      Puede ser alguien real o imaginario, un héroe, una figura histórica, un personaje de ficción...
-                      ¡tú decides!
+                      {s.body ?? 'En este concurso tendrás que encarnar un personaje y disfrazarte como él el día del evento. Puede ser alguien real o imaginario, un héroe, una figura histórica, un personaje de ficción... ¡tú decides!'}
                     </p>
                   ) : s.type === 'text' ? (
                     <input
