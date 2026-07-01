@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 const TOP_IMAGES = [
   'had_mini_pekka.png',
   'head_adan.png',
+  'head_audrey.png',
   'head_black.png',
   'head_eve.png',
   'head_frida.png',
@@ -18,6 +19,7 @@ const TOP_IMAGES = [
 
 const MIDDLE_IMAGES = [
   'body_adan.png',
+  'body_audrey.png',
   'body_black.png',
   'body_eve.png',
   'body_frida.png',
@@ -33,6 +35,7 @@ const MIDDLE_IMAGES = [
 const BOTTOM_IMAGES = [
   'bottom_indian.png',
   'legs_adan.png',
+  'legs_audrey.png',
   'legs_black.png',
   'legs_eve.png',
   'legs_frida.png',
