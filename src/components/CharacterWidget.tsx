@@ -88,19 +88,6 @@ export default function CharacterWidget() {
     }
   }, [])
 
-  const restartAutoShuffle = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current)
-    timerRef.current = setInterval(cycle, 5000)
-  }, [cycle])
-
-  const scheduleResume = useCallback(() => {
-    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
-    resumeTimerRef.current = setTimeout(() => {
-      restartAutoShuffle()
-      resumeTimerRef.current = null
-    }, 10000)
-  }, [restartAutoShuffle])
-
   const transitionSlot = useCallback(
     (
       setter: React.Dispatch<React.SetStateAction<SlotState>>,
@@ -149,6 +136,19 @@ export default function CharacterWidget() {
       setBottom(prev => ({ ...prev, index: prev.nextIndex, transitioning: false }))
     }, ANIM_DURATION + 100)
   }, [])
+
+  const restartAutoShuffle = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    timerRef.current = setInterval(cycle, 5000)
+  }, [cycle])
+
+  const scheduleResume = useCallback(() => {
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+    resumeTimerRef.current = setTimeout(() => {
+      restartAutoShuffle()
+      resumeTimerRef.current = null
+    }, 10000)
+  }, [restartAutoShuffle])
 
   useEffect(() => {
     timerRef.current = setInterval(cycle, 5000)
