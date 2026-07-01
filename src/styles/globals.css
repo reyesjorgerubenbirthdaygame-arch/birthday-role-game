@@ -30,3 +30,8 @@ body {
   from { transform: translateX(-100%); opacity: 0; }
   to   { transform: translateX(0); opacity: 1; }
 }
+
+@keyframes snackSlideIn {
+  from { transform: translateX(-50%) translateY(-1rem); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
