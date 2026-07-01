@@ -46,5 +46,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/character/:path*', '/admin/:path*'],
+  matcher: [
+    /*
+     * Match all request paths except static assets.
+     * Required by Supabase SSR to refresh auth sessions on every request.
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }
