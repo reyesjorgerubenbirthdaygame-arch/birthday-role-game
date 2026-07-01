@@ -124,6 +124,7 @@ export function CharacterForm({
 
       <div className="flex flex-col gap-2">
         <label className="text-text-secondary text-sm">Trasfondo</label>
+        <p className="text-text-secondary text-sm italic">Todos queremos una historia chula, pero ten cuidado... ¡luego tendrás que interpretarlo!</p>
         <select value={background} onChange={e => setBackground(e.target.value)} disabled={isLocked} className={inputClass}>
           <option value="">— elige —</option>
           {backgrounds.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
