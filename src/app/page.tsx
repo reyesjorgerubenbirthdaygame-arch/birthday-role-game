@@ -43,19 +43,19 @@ const STEPS = [
   {
     key: '' as const,
     title: '¿Quién serás?',
-    hint: 'El evento más épico se acerca',
+    hint: 'La herencia del tio George está por decidirse',
     type: 'intro' as const,
   },
   {
     key: 'positive_trait_1',
     title: 'Primera virtud',
-    hint: 'Elige el rasgo que te define en la luz',
+    hint: 'Algo de lo que puedes estar orgulloso',
     type: 'select_positive' as const,
   },
   {
     key: 'positive_trait_2',
     title: 'Segunda virtud',
-    hint: 'Nadie tiene un solo don…',
+    hint: 'Venga te dejo otra más pero no te vengas arriba...',
     type: 'select_positive' as const,
   },
   {
@@ -73,7 +73,7 @@ const STEPS = [
   {
     key: 'background',
     title: 'Trasfondo',
-    hint: 'Tu historia antes de que todo comience',
+    hint: 'Todos queremos una buena historia, pero luego tendrás que interpretarla...',
     type: 'select_background' as const,
   },
   {
@@ -496,7 +496,7 @@ export default function HomePage() {
                   {s.type === 'intro' ? (
                     <p className="text-text-secondary text-base leading-relaxed">
                       En este concurso tendrás que encarnar un personaje y disfrazarte como él el día del evento.
-                      Puede ser alguien real o imaginario — un héroe, una figura histórica, un personaje de ficción...
+                      Puede ser alguien real o imaginario, un héroe, una figura histórica, un personaje de ficción...
                       ¡tú decides!
                     </p>
                   ) : s.type === 'text' ? (
