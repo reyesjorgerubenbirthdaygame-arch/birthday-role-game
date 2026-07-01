@@ -205,18 +205,19 @@ export default function CharacterWidget() {
         right: 0,
         textAlign: 'center',
         color: 'var(--color-accent)',
-        opacity: 0.3,
+        opacity: 0.4,
         fontSize: '1rem',
         letterSpacing: '0.05em',
         pointerEvents: 'none',
         userSelect: 'none',
         zIndex: 0,
         padding: '0 1rem',
+        paddingLeft: '2rem',
       }}>
         esto no sirve para nada pero está entretenido
       </div>
       {/* TOP ROW â€” head, bottom-aligned */}
-      <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '0.5rem', position: 'relative', zIndex: 1 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', position: 'relative', zIndex: 1 }}>
         <button
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {
@@ -336,7 +337,7 @@ export default function CharacterWidget() {
       </div>
 
       {/* BOTTOM ROW â€” legs, top-aligned */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', paddingTop: '1.5rem', position: 'relative', zIndex: 1 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
         <button
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', margin: '0 0.4rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           onClick={() => {

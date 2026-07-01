@@ -55,7 +55,7 @@ const STEPS = [
   {
     key: 'positive_trait_2',
     title: 'Segunda virtud',
-    hint: 'venga te dejo otra más pero no te vengas arriba...',
+    hint: 'Venga te dejo otra más pero no te vengas arriba...',
     type: 'select_positive' as const,
   },
   {
@@ -73,7 +73,7 @@ const STEPS = [
   {
     key: 'background',
     title: 'Trasfondo',
-    hint: 'todos queremos una buena historia, pero luego tendrás que interpretarla...',
+    hint: 'Todos queremos una buena historia, pero luego tendrás que interpretarla...',
     type: 'select_background' as const,
   },
   {
