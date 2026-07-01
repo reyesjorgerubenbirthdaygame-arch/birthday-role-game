@@ -229,7 +229,7 @@ export default function HomePage() {
     const supabase = createClient()
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/confirm` },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
   }
 
