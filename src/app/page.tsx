@@ -39,6 +39,7 @@ interface CharacterData {
 interface PlayerRecord extends CharacterData {
   is_complete: boolean
   positive_trait_3?: string
+  needs_bed?: boolean
 }
 
 const STEPS = [
@@ -126,6 +127,7 @@ export default function HomePage() {
   const [saving, setSaving] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
   const [curiosoUnlocked, setCuriosoUnlocked] = useState(false)
+  const [needsBed, setNeedsBed] = useState(false)
 
   // Countdown ticker
   useEffect(() => {
@@ -165,8 +167,8 @@ export default function HomePage() {
 
       const [posRes, negRes, bgRes, playerRes] = await Promise.race([
         Promise.all([
-          supabase.from('trait_options').select('id, name').eq('type', 'positive').eq('is_selectable', true).order('name'),
-          supabase.from('trait_options').select('id, name').eq('type', 'negative').eq('is_selectable', true).order('name'),
+          supabase.from('trait_options').select('id, name, is_selectable').eq('type', 'positive').order('name'),
+          supabase.from('trait_options').select('id, name, is_selectable').eq('type', 'negative').order('name'),
           supabase.from('background_options').select('id, name').order('name'),
           supabase.from('players').select('*').eq('user_id', userId).maybeSingle(),
         ]),
@@ -178,6 +180,8 @@ export default function HomePage() {
       if (bgRes.data) setBackgrounds(bgRes.data as BackgroundOption[])
 
       const player = playerRes.data as PlayerRecord | null
+
+      if (player?.needs_bed) setNeedsBed(player.needs_bed)
 
       if (player?.is_complete) {
         setCompletedPlayer(player)
@@ -307,6 +311,17 @@ export default function HomePage() {
       setCompletedPlayer({ ...character, is_complete: true })
       setView('complete')
     }
+  }
+
+  async function handleNeedsBedChange(checked: boolean) {
+    setNeedsBed(checked)
+    if (!user) return
+    const supabase = createClient()
+    await supabase.from('players').upsert({
+      user_id: user.id,
+      needs_bed: checked,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' })
   }
 
   async function handleCuriosoUnlocked() {
@@ -453,8 +468,8 @@ export default function HomePage() {
               : s.key === 'negative_trait_2' ? character.negative_trait_1
               : null
 
-            const selectOptions = (s.type === 'select_positive' ? posTraits
-              : s.type === 'select_negative' ? negTraits
+            const selectOptions = (s.type === 'select_positive' ? posTraits.filter(t => t.is_selectable !== false)
+              : s.type === 'select_negative' ? negTraits.filter(t => t.is_selectable !== false)
               : s.type === 'select_background' ? backgrounds
               : []).filter(opt => !excludeId || opt.id !== excludeId)
 
@@ -595,7 +610,7 @@ export default function HomePage() {
                 )}
                 {completedPlayer.positive_trait_3 && (
                   <span className="text-sm text-accent bg-bg-secondary border border-accent/30 px-3 py-1 rounded-full">
-                    ✨ Curioso/a
+                    ✨ {traitName(completedPlayer.positive_trait_3, posTraits)}
                   </span>
                 )}
               </div>
@@ -628,6 +643,23 @@ export default function HomePage() {
           )}
 
         </div>
+
+        {/* Needs bed checkbox — shown in building and complete views */}
+        {(view === 'building' || view === 'complete') && (
+          <div className="bg-bg-card rounded-lg px-6 py-4 shadow-md w-full flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="needs-bed"
+              checked={needsBed}
+              onChange={e => handleNeedsBedChange(e.target.checked)}
+              className="w-4 h-4 accent-accent cursor-pointer"
+            />
+            <label htmlFor="needs-bed" className="text-text-secondary text-sm cursor-pointer select-none">
+              ¿Necesitas cama?
+            </label>
+          </div>
+        )}
+
       </div>
     </main>
   )

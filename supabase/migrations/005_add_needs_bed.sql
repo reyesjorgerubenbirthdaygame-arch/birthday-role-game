@@ -1,0 +1,1 @@
+ALTER TABLE players ADD COLUMN IF NOT EXISTS needs_bed boolean NOT NULL DEFAULT false;

@@ -21,6 +21,7 @@ export interface TraitOption {
   id: string
   name: string
   type: TraitType
+  is_selectable?: boolean
 }
 
 export interface BackgroundOption {
