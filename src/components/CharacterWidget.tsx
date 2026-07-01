@@ -2,6 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+function extractCharacter(filename: string): string {
+  return filename.replace(/\.(png|jpg)$/, '').replace(/^(head_|had_|body_|middle_|legs_|bottom_)/, '')
+}
+
 const TOP_IMAGES = [
   'had_mini_pekka.png',
   'head_adan.png',
@@ -67,7 +71,11 @@ function randomNextIndex(currentIndex: number, len: number): number {
   )
 }
 
-export default function CharacterWidget() {
+interface CharacterWidgetProps {
+  onEasterEggUnlocked?: () => void
+}
+
+export default function CharacterWidget({ onEasterEggUnlocked }: CharacterWidgetProps) {
   const [top, setTop] = useState<SlotState>(() => {
     const index = Math.floor(Math.random() * TOP_IMAGES.length)
     return { index, nextIndex: index, transitioning: false, enterFrom: 'right' }
@@ -83,6 +91,16 @@ export default function CharacterWidget() {
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const easterEggTriggered = useRef(false)
+  const userInitiated = useRef(false)
+  const onEasterEggUnlockedRef = useRef(onEasterEggUnlocked)
+  const snackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [showSnack, setShowSnack] = useState(false)
+
+  // Keep the callback ref in sync with the latest prop without adding it to effect deps
+  useEffect(() => {
+    onEasterEggUnlockedRef.current = onEasterEggUnlocked
+  })
 
   const stopAutoShuffle = useCallback(() => {
     if (timerRef.current) {
@@ -98,6 +116,7 @@ export default function CharacterWidget() {
       delta: number,
       enterFrom: 'left' | 'right'
     ) => {
+      userInitiated.current = true
       setter(prev => {
         if (prev.transitioning) return prev
         const nextIndex = wrapIndex(prev.index + delta, len)
@@ -143,6 +162,7 @@ export default function CharacterWidget() {
   const restartAutoShuffle = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current)
     timerRef.current = setInterval(cycle, 5000)
+    userInitiated.current = false
   }, [cycle])
 
   const scheduleResume = useCallback(() => {
@@ -158,8 +178,24 @@ export default function CharacterWidget() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+      if (snackTimerRef.current) clearTimeout(snackTimerRef.current)
     }
   }, [cycle])
+
+  useEffect(() => {
+    if (top.transitioning || middle.transitioning || bottom.transitioning) return
+    if (easterEggTriggered.current) return
+    if (!userInitiated.current) return
+    const topChar = extractCharacter(TOP_IMAGES[top.index])
+    const midChar = extractCharacter(MIDDLE_IMAGES[middle.index])
+    const botChar = extractCharacter(BOTTOM_IMAGES[bottom.index])
+    if (topChar === midChar && midChar === botChar) {
+      easterEggTriggered.current = true
+      setShowSnack(true)
+      snackTimerRef.current = setTimeout(() => setShowSnack(false), 4000)
+      onEasterEggUnlockedRef.current?.()
+    }
+  }, [top.index, middle.index, bottom.index, top.transitioning, middle.transitioning, bottom.transitioning])
 
   const slotStyle: React.CSSProperties = {
     position: 'relative',
@@ -338,6 +374,31 @@ export default function CharacterWidget() {
           </svg>
         </button>
       </div>
+
+      {/* Easter egg snack */}
+      {showSnack && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '1.5rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 9999,
+            backgroundColor: '#1a1a2e',
+            border: '1px solid #7c3aed',
+            borderRadius: '0.5rem',
+            padding: '0.75rem 1.25rem',
+            color: '#7c3aed',
+            fontWeight: 600,
+            fontSize: '0.95rem',
+            boxShadow: '0 4px 24px rgba(124,58,237,0.35)',
+            whiteSpace: 'nowrap',
+            animation: 'snackSlideIn 0.3s cubic-bezier(0.4,0,0.2,1) both',
+          }}
+        >
+          ¡Has obtenido el rasgo &ldquo;Curioso/a&rdquo;!
+        </div>
+      )}
 
       {/* BOTTOM ROW â€” legs, top-aligned */}
       <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>

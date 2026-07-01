@@ -33,10 +33,12 @@ interface CharacterData {
   negative_trait_1: string
   negative_trait_2: string
   background: string
+  positive_trait_3?: string
 }
 
 interface PlayerRecord extends CharacterData {
   is_complete: boolean
+  positive_trait_3?: string
 }
 
 const STEPS = [
@@ -94,7 +96,7 @@ const STEPS = [
 ]
 
 export default function HomePage() {
-  const [view, setView] = useState<View>('auth')
+  const [view, setView] = useState<View>('loading')
   const [user, setUser] = useState<User | null>(null)
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(calculateTimeLeft())
 
@@ -123,6 +125,7 @@ export default function HomePage() {
   const [stepError, setStepError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
+  const [curiosoUnlocked, setCuriosoUnlocked] = useState(false)
 
   // Countdown ticker
   useEffect(() => {
@@ -130,19 +133,10 @@ export default function HomePage() {
     return () => clearInterval(timer)
   }, [])
 
-  // Auth state listener
+  // Auth state listener — rely solely on onAuthStateChange (fires INITIAL_SESSION
+  // immediately with the current session from cookies, avoiding a race with getSession())
   useEffect(() => {
     const supabase = createClient()
-
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) {
-        setView('auth')
-        return
-      }
-      setUser(session.user)
-      setView('loading')
-      await loadBuilderData(session.user.id)
-    }).catch(() => setView('auth'))
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!session) {
@@ -171,8 +165,8 @@ export default function HomePage() {
 
       const [posRes, negRes, bgRes, playerRes] = await Promise.race([
         Promise.all([
-          supabase.from('trait_options').select('id, name').eq('type', 'positive').order('name'),
-          supabase.from('trait_options').select('id, name').eq('type', 'negative').order('name'),
+          supabase.from('trait_options').select('id, name').eq('type', 'positive').eq('is_selectable', true).order('name'),
+          supabase.from('trait_options').select('id, name').eq('type', 'negative').eq('is_selectable', true).order('name'),
           supabase.from('background_options').select('id, name').order('name'),
           supabase.from('players').select('*').eq('user_id', userId).maybeSingle(),
         ]),
@@ -315,6 +309,25 @@ export default function HomePage() {
     }
   }
 
+  async function handleCuriosoUnlocked() {
+    if (curiosoUnlocked || !user) return
+    setCuriosoUnlocked(true)
+    const supabase = createClient()
+    const { data: trait } = await supabase
+      .from('trait_options')
+      .select('id')
+      .eq('name', 'Curioso')
+      .single()
+    if (trait) {
+      await supabase.from('players').upsert({
+        user_id: user.id,
+        positive_trait_3: trait.id,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'user_id' })
+      setCompletedPlayer(prev => prev ? { ...prev, positive_trait_3: trait.id } : prev)
+    }
+  }
+
   // Helpers for display names
   function traitName(id: string, list: TraitOption[]): string {
     return list.find(t => t.id === id)?.name ?? id
@@ -331,7 +344,7 @@ export default function HomePage() {
 
         {/* Countdown — shown unless in building view */}
         {view === 'building' ? (
-          <CharacterWidget />
+          <CharacterWidget onEasterEggUnlocked={handleCuriosoUnlocked} />
         ) : (
           <div className="bg-bg-card rounded-lg p-6 shadow-md text-center">
             <p className="text-text-muted text-xs uppercase tracking-widest mb-3">El evento comienza en</p>
@@ -578,6 +591,11 @@ export default function HomePage() {
                 {completedPlayer.positive_trait_2 && (
                   <span className="text-sm text-text-secondary bg-bg-secondary px-3 py-1 rounded-full">
                     {traitName(completedPlayer.positive_trait_2, posTraits)}
+                  </span>
+                )}
+                {completedPlayer.positive_trait_3 && (
+                  <span className="text-sm text-accent bg-bg-secondary border border-accent/30 px-3 py-1 rounded-full">
+                    ✨ Curioso/a
                   </span>
                 )}
               </div>
