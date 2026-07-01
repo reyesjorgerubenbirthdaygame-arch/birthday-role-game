@@ -94,6 +94,13 @@ const STEPS = [
     hint: 'Piensa en la historia que vas a contar y asegurate que es buena, luego tendrás que ser convincente de que todas las piezas cuadran.',
     type: 'select_background' as const,
   },
+  {
+    key: 'needs_bed',
+    title: '¿Una última pregunta?',
+    hint: '¿Necesitarás posada para pasar la noche?',
+    type: 'yes_no' as const,
+    body: '¿Necesitarás posada para pasar la noche? (Y por posada igual me refiero a tienda de campaña en el jardín)',
+  },
 ]
 
 export default function HomePage() {
@@ -181,10 +188,9 @@ export default function HomePage() {
 
       const player = playerRes.data as PlayerRecord | null
 
-      if (player?.needs_bed) setNeedsBed(player.needs_bed)
-
       if (player?.is_complete) {
         setCompletedPlayer(player)
+        setNeedsBed(player.needs_bed ?? false)
         setView('complete')
       } else {
         if (player) {
@@ -245,20 +251,20 @@ export default function HomePage() {
   // Builder handlers
   function getCurrentValue(): string {
     const s = STEPS[step]
-    if (s.type === 'intro' || !s.key) return ''
+    if (s.type === 'intro' || s.type === 'yes_no' || !s.key) return ''
     return character[s.key as keyof CharacterData] ?? ''
   }
 
   function setCurrentValue(val: string) {
     setStepError(null)
     const s = STEPS[step]
-    if (s.type === 'intro' || !s.key) return
+    if (s.type === 'intro' || s.type === 'yes_no' || !s.key) return
     setCharacter(prev => ({ ...prev, [s.key]: val }))
   }
 
   function validateStep(): boolean {
     const s = STEPS[step]
-    if (s.type === 'intro') return true
+    if (s.type === 'intro' || s.type === 'yes_no') return true
     const val = character[s.key as keyof CharacterData]
     if (!val?.trim()) {
       setStepError('Este campo es obligatorio.')
@@ -301,6 +307,7 @@ export default function HomePage() {
       negative_trait_1: character.negative_trait_1,
       negative_trait_2: character.negative_trait_2,
       background: character.background,
+      needs_bed: needsBed,
       is_complete: true,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id' })
@@ -311,17 +318,6 @@ export default function HomePage() {
       setCompletedPlayer({ ...character, is_complete: true })
       setView('complete')
     }
-  }
-
-  async function handleNeedsBedChange(checked: boolean) {
-    setNeedsBed(checked)
-    if (!user) return
-    const supabase = createClient()
-    await supabase.from('players').upsert({
-      user_id: user.id,
-      needs_bed: checked,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id' })
   }
 
   async function handleCuriosoUnlocked() {
@@ -547,6 +543,24 @@ export default function HomePage() {
                       onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleNext() } }}
                       autoFocus
                     />
+                  ) : s.type === 'yes_no' ? (
+                    <div className="flex flex-col gap-3">
+                      <p className="text-text-secondary text-base leading-relaxed">{s.body}</p>
+                      <div className="flex gap-3 mt-2">
+                        <button
+                          onClick={() => setNeedsBed(true)}
+                          className={`flex-1 rounded-md px-4 py-3 font-medium border transition-colors ${needsBed ? 'bg-accent text-white border-accent' : 'border-border text-text-primary hover:bg-bg-secondary'}`}
+                        >
+                          Sí, necesito
+                        </button>
+                        <button
+                          onClick={() => setNeedsBed(false)}
+                          className={`flex-1 rounded-md px-4 py-3 font-medium border transition-colors ${!needsBed ? 'bg-accent text-white border-accent' : 'border-border text-text-primary hover:bg-bg-secondary'}`}
+                        >
+                          No, gracias
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     <select
                       value={val}
@@ -629,8 +643,12 @@ export default function HomePage() {
               </div>
 
               {completedPlayer.background && (
-                <p className="text-text-muted text-sm mb-6">{bgName(completedPlayer.background)}</p>
+                <p className="text-text-muted text-sm mb-2">{bgName(completedPlayer.background)}</p>
               )}
+
+              <p className="text-text-muted text-sm mt-2 mb-6">
+                {needsBed ? '🏕️ Necesita alojamiento' : '🏠 No necesita alojamiento'}
+              </p>
 
               <p className="text-text-secondary text-sm">El evento comienza pronto. ¡Prepárate!</p>
               <button
@@ -643,22 +661,6 @@ export default function HomePage() {
           )}
 
         </div>
-
-        {/* Needs bed checkbox — shown in building and complete views */}
-        {(view === 'building' || view === 'complete') && (
-          <div className="bg-bg-card rounded-lg px-6 py-4 shadow-md w-full flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="needs-bed"
-              checked={needsBed}
-              onChange={e => handleNeedsBedChange(e.target.checked)}
-              className="w-4 h-4 accent-accent cursor-pointer"
-            />
-            <label htmlFor="needs-bed" className="text-text-secondary text-sm cursor-pointer select-none">
-              ¿Necesitas cama?
-            </label>
-          </div>
-        )}
 
       </div>
     </main>
