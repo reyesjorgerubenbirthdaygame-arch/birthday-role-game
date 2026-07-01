@@ -165,8 +165,8 @@ export default function HomePage() {
 
       const [posRes, negRes, bgRes, playerRes] = await Promise.race([
         Promise.all([
-          supabase.from('trait_options').select('id, name').eq('type', 'positive').eq('is_selectable', true).order('name'),
-          supabase.from('trait_options').select('id, name').eq('type', 'negative').eq('is_selectable', true).order('name'),
+          supabase.from('trait_options').select('id, name, is_selectable').eq('type', 'positive').order('name'),
+          supabase.from('trait_options').select('id, name, is_selectable').eq('type', 'negative').order('name'),
           supabase.from('background_options').select('id, name').order('name'),
           supabase.from('players').select('*').eq('user_id', userId).maybeSingle(),
         ]),
@@ -453,8 +453,8 @@ export default function HomePage() {
               : s.key === 'negative_trait_2' ? character.negative_trait_1
               : null
 
-            const selectOptions = (s.type === 'select_positive' ? posTraits
-              : s.type === 'select_negative' ? negTraits
+            const selectOptions = (s.type === 'select_positive' ? posTraits.filter(t => t.is_selectable !== false)
+              : s.type === 'select_negative' ? negTraits.filter(t => t.is_selectable !== false)
               : s.type === 'select_background' ? backgrounds
               : []).filter(opt => !excludeId || opt.id !== excludeId)
 
@@ -595,7 +595,7 @@ export default function HomePage() {
                 )}
                 {completedPlayer.positive_trait_3 && (
                   <span className="text-sm text-accent bg-bg-secondary border border-accent/30 px-3 py-1 rounded-full">
-                    ✨ Curioso/a
+                    ✨ {traitName(completedPlayer.positive_trait_3, posTraits)}
                   </span>
                 )}
               </div>
