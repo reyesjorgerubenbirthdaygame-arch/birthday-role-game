@@ -184,16 +184,18 @@ export default function CharacterWidget({ onEasterEggUnlocked }: CharacterWidget
 
   useEffect(() => {
     if (top.transitioning || middle.transitioning || bottom.transitioning) return
-    if (easterEggTriggered.current) return
     if (!userInitiated.current) return
     const topChar = extractCharacter(TOP_IMAGES[top.index])
     const midChar = extractCharacter(MIDDLE_IMAGES[middle.index])
     const botChar = extractCharacter(BOTTOM_IMAGES[bottom.index])
     if (topChar === midChar && midChar === botChar) {
-      easterEggTriggered.current = true
       setShowSnack(true)
+      if (snackTimerRef.current) clearTimeout(snackTimerRef.current)
       snackTimerRef.current = setTimeout(() => setShowSnack(false), 4000)
-      onEasterEggUnlockedRef.current?.()
+      if (!easterEggTriggered.current) {
+        easterEggTriggered.current = true
+        onEasterEggUnlockedRef.current?.()
+      }
     }
   }, [top.index, middle.index, bottom.index, top.transitioning, middle.transitioning, bottom.transitioning])
 
