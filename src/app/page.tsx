@@ -39,6 +39,7 @@ interface CharacterData {
 interface PlayerRecord extends CharacterData {
   is_complete: boolean
   positive_trait_3?: string
+  needs_bed?: boolean
 }
 
 const STEPS = [
@@ -126,6 +127,7 @@ export default function HomePage() {
   const [saving, setSaving] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
   const [curiosoUnlocked, setCuriosoUnlocked] = useState(false)
+  const [needsBed, setNeedsBed] = useState(false)
 
   // Countdown ticker
   useEffect(() => {
@@ -178,6 +180,8 @@ export default function HomePage() {
       if (bgRes.data) setBackgrounds(bgRes.data as BackgroundOption[])
 
       const player = playerRes.data as PlayerRecord | null
+
+      if (player?.needs_bed) setNeedsBed(player.needs_bed)
 
       if (player?.is_complete) {
         setCompletedPlayer(player)
@@ -307,6 +311,17 @@ export default function HomePage() {
       setCompletedPlayer({ ...character, is_complete: true })
       setView('complete')
     }
+  }
+
+  async function handleNeedsBedChange(checked: boolean) {
+    setNeedsBed(checked)
+    if (!user) return
+    const supabase = createClient()
+    await supabase.from('players').upsert({
+      user_id: user.id,
+      needs_bed: checked,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' })
   }
 
   async function handleCuriosoUnlocked() {
@@ -628,6 +643,23 @@ export default function HomePage() {
           )}
 
         </div>
+
+        {/* Needs bed checkbox — shown in building and complete views */}
+        {(view === 'building' || view === 'complete') && (
+          <div className="bg-bg-card rounded-lg px-6 py-4 shadow-md w-full flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="needs-bed"
+              checked={needsBed}
+              onChange={e => handleNeedsBedChange(e.target.checked)}
+              className="w-4 h-4 accent-accent cursor-pointer"
+            />
+            <label htmlFor="needs-bed" className="text-text-secondary text-sm cursor-pointer select-none">
+              ¿Necesitas cama?
+            </label>
+          </div>
+        )}
+
       </div>
     </main>
   )
